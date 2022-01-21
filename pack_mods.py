@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 """Pack mods from a local installation for a dedicated server."""
 
 from argparse import ArgumentParser, Namespace
