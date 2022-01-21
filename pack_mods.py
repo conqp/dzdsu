@@ -1,6 +1,7 @@
 """Pack mods from a local installation for a dedicated server."""
 
 from argparse import ArgumentParser, Namespace
+from logging import INFO, WARNING, getLogger
 from os import environ, name
 from pathlib import Path
 from sys import exit, stderr
@@ -14,6 +15,7 @@ if name != 'nt':
 
 
 FILENAME = 'dayz-mods.tar.gz'
+LOGGER = getLogger(__file__)
 MODS_DIR = Path('steamapps/common/DayZ/!Workshop')
 STEAM_DIR = Path(environ.get("PROGRAMFILES(X86)")) / 'Steam'
 
@@ -33,6 +35,9 @@ def get_args(description: str = __doc__) -> Namespace:
         '-f', '--file', type=Path, default=Path.cwd() / FILENAME,
         metavar='filename', help='output file name'
     )
+    parser.add_argument(
+        '-v', '--verbose', action='store_true', help='verbose logging output'
+    )
     return parser.parse_args()
 
 
@@ -46,8 +51,11 @@ def pack_directory(mods_dir: Path, tar_file: Path) -> None:
     """Packs the mods in the given mod folder into a tar file."""
 
     with tar_file.open('wb') as file:
+        LOGGER.info('Packing mods from %s into: %s', mods_dir, tar_file)
+
         with open(fileobj=file, mode='w:gz') as tar:
             for mod in get_mods(mods_dir):
+                LOGGER.info('Adding mod: %s', mod.name)
                 tar.add(mod, arcname=mod.name.replace(' ', '_'))
 
 
@@ -55,6 +63,7 @@ def main() -> None:
     """Runs the script."""
 
     args = get_args()
+    basicConfig(level=INFO if args.verbose else WARNING)
     mods_dir = args.mods_dir or (args.steam_dir / MODS_DIR)
     pack_directory(mods_dir, args.file)
 
