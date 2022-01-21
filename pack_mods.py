@@ -39,9 +39,7 @@ def get_args(description: str = __doc__) -> Namespace:
 def get_mods(mods_dir: Path) -> Iterator[Path]:
     """Yields mod directories in the mods dir."""
 
-    for mod in mods_dir.iterdir():
-        if mod.name.startswith('@'):
-            yield mod
+    return filter(lambda mod: mod.name.startswith('@'), mods_dir.iterdir())
 
 
 def get_archive_name(mod_name: str) -> str:
