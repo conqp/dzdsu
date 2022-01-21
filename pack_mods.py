@@ -9,15 +9,17 @@ from tarfile import open
 from typing import Iterator
 
 
-if name != 'nt':
-    print('This script runs on Windows only.', file=stderr)
-    exit(1)
-
-
 FILENAME = 'dayz-mods.tar.gz'
 LOGGER = getLogger(__file__)
 MODS_DIR = Path('steamapps/common/DayZ/!Workshop')
-STEAM_DIR = Path(environ.get("PROGRAMFILES(X86)")) / 'Steam'
+
+if name == 'nt':
+    STEAM_DIR = Path(environ.get("PROGRAMFILES(X86)")) / 'Steam'
+elif name == 'posix':
+    STEAM_DIR = Path.home() / '.steam'
+else:
+    LOGGER.error('Unsupported operating system: %s.', name)
+    exit(1)
 
 
 def get_args(description: str = __doc__) -> Namespace:
