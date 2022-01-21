@@ -5,7 +5,7 @@ from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
 from os import environ, name
 from pathlib import Path
-from sys import exit, stderr
+from sys import exit
 from tarfile import open
 from typing import Iterator
 
