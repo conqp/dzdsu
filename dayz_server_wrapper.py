@@ -107,7 +107,8 @@ def main() -> int:
     args = get_args()
     config = ConfigParser()
     config.read(args.config_file)
-    command = [SERVER_BINARY, *get_parameters(config)]
+    binary = Path.cwd() / SERVER_BINARY
+    command = [str(binary), *get_parameters(config)]
     completed_process = run(command, check=False)
     return completed_process.returncode
 
