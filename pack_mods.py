@@ -4,7 +4,7 @@ from argparse import ArgumentParser, Namespace
 from os import environ, name
 from pathlib import Path
 from sys import exit, stderr
-from tarfile import TarFile, open
+from tarfile import open
 from typing import Iterator
 
 
@@ -42,25 +42,13 @@ def get_mods(mods_dir: Path) -> Iterator[Path]:
     return filter(lambda mod: mod.name.startswith('@'), mods_dir.iterdir())
 
 
-def get_archive_name(mod_name: str) -> str:
-    """Returns the archive name of the mod."""
-
-    return mod_name.replace(' ', '_')
-
-
-def add_mods(tar: TarFile, mods_dir: Path) -> None:
-    """Packs mods into the tar file."""
-
-    for mod in get_mods(mods_dir):
-        tar.add(mod, arcname=get_archive_name(mod.name))
-
-
 def pack_directory(mods_dir: Path, tar_file: Path) -> None:
     """Packs the mods in the given mod folder into a tar file."""
 
     with tar_file.open('wb') as file:
         with open(fileobj=file, mode='w:gz') as tar:
-            add_mods(tar, mods_dir)
+            for mod in get_mods(mods_dir):
+                tar.add(mod, arcname=mod.name.replace(' ', '_'))
 
 
 def main() -> None:
