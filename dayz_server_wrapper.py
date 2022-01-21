@@ -20,6 +20,13 @@ else:
     raise OSError('Unsupported operating system.')
 
 
+class CaseSensitiveConfigParser(ConfigParser):
+    """Config parser with case-sensitive options."""
+
+    def optionxform(self, optionstr: str) -> str:
+        return optionstr
+
+
 def get_args(description: str = __doc__) -> Namespace:
     """Return the parsed command line arguments."""
 
@@ -105,7 +112,7 @@ def main() -> int:
     """Starts the DayZ server."""
 
     args = get_args()
-    config = ConfigParser()
+    config = CaseSensitiveConfigParser()
     config.read(args.config_file)
     binary = Path.cwd() / SERVER_BINARY
     command = [str(binary), *get_parameters(config)]
