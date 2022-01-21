@@ -74,6 +74,17 @@ def extract_mods(tar_file: Path, target_dir: Path) -> None:
         tar.extractall(path=target_dir)
 
 
+def install_keys(base_dir: Path) -> None:
+    """Installs the mod keys."""
+
+    for key in base_dir.glob('@*/keys/*.bikey'):
+        LOGGER.info('Installing key: %s', key.name)
+
+        with base_dir.joinpath('keys').joinpath(key.name).open('wb') as dst:
+            with key.open('rb') as src:
+                dst.write(src.read())
+
+
 def main() -> None:
     """Update mods."""
 
@@ -89,6 +100,7 @@ def main() -> None:
         return
 
     extract_mods(args.file, args.directory)
+    install_keys(args.directory)
     store_hash(args.hash_cache, sha1sum)
 
 
