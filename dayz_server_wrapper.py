@@ -39,14 +39,14 @@ def get_args(description: str = __doc__) -> Namespace:
     return parser.parse_args()
 
 
-def get_mods(config: ConfigParser) -> Iterator[str]:
+def get_mods(config: ConfigParser, section: str) -> Iterator[str]:
     """Yield enabled mods."""
 
-    if not config.has_section('mods'):
+    if not config.has_section(section):
         return
 
-    for mod in config.options('mods'):
-        if config.getboolean('mods', mod):
+    for mod in config.options(section):
+        if config.getboolean(section, mod):
             if not mod.startswith('@'):
                 yield f'@{mod}'
             else:
@@ -75,6 +75,10 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
     cpuCount = <int>
 
     [mods]
+    <mod_name1> = (on|off)
+    <mod_name2> = (on|off)
+
+    [server-mods]
     <mod_name1> = (on|off)
     <mod_name2> = (on|off)
     ...
@@ -113,8 +117,11 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
     if cpus := config.getint('server', 'cpuCount', fallback=cpu_count()):
         yield f'-cpuCount={cpus}'
 
-    if mods := list(get_mods(config)):
-        yield f'-mods={";".join(mods)}'
+    if mods := list(get_mods(config, 'mods')):
+        yield f'-mod={";".join(mods)}'
+
+    if mods := list(get_mods(config, 'server-mods')):
+        yield f'-serverMod={";".join(mods)}'
 
 
 def main() -> int:
