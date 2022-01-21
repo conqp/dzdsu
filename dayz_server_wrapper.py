@@ -3,6 +3,7 @@
 
 from argparse import ArgumentParser, Namespace
 from configparser import ConfigParser
+from multiprocessing import cpu_count
 from os import name
 from pathlib import Path
 from subprocess import run
@@ -57,6 +58,7 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
     INI file structure:
 
     [logging]
+    dologs = (on|off)
     adminlog = (on|off)
     netlog = (on|off)
 
@@ -70,12 +72,16 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
     config = <file_name>
     port = <int>
     profiles = <dir_name>
+    cpuCount = <int>
 
     [mods]
     <mod_name1> = (on|off)
     <mod_name2> = (on|off)
     ...
     """
+
+    if config.getboolean('logging', 'dologs', fallback=True):
+        yield '-dologs'
 
     if config.getboolean('logging', 'adminlog', fallback=True):
         yield '-adminlog'
@@ -103,6 +109,9 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
 
     if profiles := config.get('server', 'profiles', fallback='ServerProfiles'):
         yield f'-profiles={profiles}'
+
+    if cpus := config.getint('server', 'cpuCount', fallback=cpu_count()):
+        yield f'-cpuCount={cpus}'
 
     if mods := list(get_mods(config)):
         yield f'-mods={";".join(mods)}'
