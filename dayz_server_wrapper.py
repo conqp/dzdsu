@@ -5,7 +5,9 @@ from argparse import ArgumentParser, Namespace
 from configparser import ConfigParser
 from os import name
 from pathlib import Path
+from subprocess import run
 from sys import exit
+from typing import Iterator
 
 
 CONFIG_FILE = Path('dayz.ini')
@@ -29,7 +31,7 @@ def get_args(description: str = __doc__) -> Namespace:
     return parser.parse_args()
 
 
-def get_mods(config:ConfigParser) -> Iterator[str]:
+def get_mods(config: ConfigParser) -> Iterator[str]:
     """Yield enabled mods."""
 
     if not config.has_section('mods'):
