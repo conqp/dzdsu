@@ -1,7 +1,7 @@
 """Pack mods from a local installation for a dedicated server."""
 
 from argparse import ArgumentParser, Namespace
-from logging import INFO, WARNING, getLogger
+from logging import INFO, WARNING, basicConfig, getLogger
 from os import environ, name
 from pathlib import Path
 from sys import exit, stderr
