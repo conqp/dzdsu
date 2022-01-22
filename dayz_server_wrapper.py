@@ -47,10 +47,7 @@ def get_mods(config: ConfigParser, section: str) -> Iterator[str]:
 
     for mod in config.options(section):
         if config.getboolean(section, mod):
-            if not mod.startswith('@'):
-                yield f'@{mod}'
-            else:
-                yield mod
+            yield mod
 
 
 def get_parameters(config: ConfigParser) -> Iterator[str]:
