@@ -32,6 +32,10 @@ def get_args(description: str = __doc__) -> Namespace:
         help='hash cache file'
     )
     parser.add_argument(
+        '--chunk-size', type=int, default=4096,
+        help='hash generation chunk size'
+    )
+    parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging output'
     )
     return parser.parse_args()
@@ -92,7 +96,7 @@ def main() -> None:
     basicConfig(level=INFO if args.verbose else WARNING)
     last_hash = get_last_hash(args.hash_cache)
     LOGGER.info('Last hash: %s', last_hash)
-    sha1sum = get_sha1_hash(args.file)
+    sha1sum = get_sha1_hash(args.file, chunk_size=args.chunk_size)
     LOGGER.info('Current hash: %s', sha1sum)
 
     if last_hash == sha1sum:
