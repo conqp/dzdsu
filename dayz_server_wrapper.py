@@ -77,6 +77,7 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
     [mods]
     <mod_name1> = (on|off)
     <mod_name2> = (on|off)
+    ...
 
     [server-mods]
     <mod_name1> = (on|off)
