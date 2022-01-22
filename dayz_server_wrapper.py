@@ -100,7 +100,7 @@ def get_parameters(config: ConfigParser) -> Iterator[str]:
     if config.getboolean('security', 'freezecheck', fallback=True):
         yield '-freezecheck'
 
-    if instance_id := config.getint('server', 'instanceId', fallback=1):
+    if instance_id := config.getint('server', 'instanceId', fallback=None):
         yield f'-instanceId={instance_id}'
 
     if config_file := config.get('server', 'config', fallback='serverDZ.cfg'):
