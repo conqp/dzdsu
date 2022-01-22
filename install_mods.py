@@ -77,7 +77,7 @@ def extract_mods(tar_file: Path, target_dir: Path) -> None:
 def install_keys(base_dir: Path) -> None:
     """Installs the mod keys."""
 
-    for key in base_dir.glob('@*/keys/*.bikey'):
+    for key in base_dir.glob('@*/[Kk]eys/*.bikey'):
         LOGGER.info('Installing key: %s', key.name)
 
         with base_dir.joinpath('keys').joinpath(key.name).open('wb') as dst:
