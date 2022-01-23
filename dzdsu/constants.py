@@ -6,6 +6,7 @@ from pathlib import Path
 
 __all__ = [
     'CONFIG_FILE',
+    'DAYZ_APP_ID',
     'JSON_FILE',
     'KEYS_GLOB',
     'SERVER_BINARY',
@@ -14,6 +15,7 @@ __all__ = [
 
 
 CONFIG_FILE = 'serverDZ.cfg'
+DAYZ_APP_ID = 221100
 KEYS_GLOB = '@*/[Kk]eys/*.bikey'
 
 if name == 'nt':

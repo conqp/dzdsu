@@ -2,7 +2,7 @@
 
 from subprocess import CalledProcessError, CompletedProcess, run
 
-from dzdsu.constants import STEAMCMD
+from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
 from dzdsu.exceptions import FailedModUpdates
 from dzdsu.mods import Mod
 from dzdsu.server import Server
@@ -30,7 +30,7 @@ class Updater:
         return steamcmd(
             '+force_install_dir', str(server.base_dir),
             '+login', self.steam_user_name,
-            '+workshop_download_item', str(server.app_id), str(mod.id),
+            '+workshop_download_item', str(DAYZ_APP_ID), str(mod.id),
             'validate'
         )
 
