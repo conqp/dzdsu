@@ -9,6 +9,9 @@ from dzdsu.constants import JSON_FILE
 from dzdsu.server import load_servers
 
 
+__all__ = ['main']
+
+
 LOGGER = getLogger('dzdsw')
 
 
@@ -16,6 +19,10 @@ def get_args(description: str = __doc__) -> Namespace:
     """Return the parsed command line arguments."""
 
     parser = ArgumentParser(description=description)
+    parser.add_argument(
+        'server', default=Path.cwd().name,
+        help='the name of the server to start'
+    )
     parser.add_argument(
         '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
         help='servers JSON file path'
