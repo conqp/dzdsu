@@ -29,7 +29,7 @@ class Server(NamedTuple):
         return cls(
             name,
             json.get('app_id', DAYZ_SERVER_APP_ID),
-            json['base_dir'],
+            Path(json['base_dir']),
             json.get('mods') or [],
             json.get('server_mods') or [],
             ServerParams.from_json(json.get('params') or {})
