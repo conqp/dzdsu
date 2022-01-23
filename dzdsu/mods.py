@@ -16,7 +16,7 @@ def enabled_mods(mods: list[int]) -> Iterator[int]:
 
 
 def mod_paths(mods: Iterable[int]) -> Iterator[Path]:
-    """Yields names mods."""
+    """Yields mod paths."""
 
     return map(lambda mod: MODS_BASE_DIR / str(DAYZ_APP_ID) / str(mod), mods)
 
