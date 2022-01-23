@@ -56,4 +56,4 @@ class Updater:
 def steamcmd(*commands: str) -> CompletedProcess:
     """Invokes steamcmd and exits."""
 
-    return run([STEAMCMD, *commands, '+exit'], check=True)
+    return run([STEAMCMD, *commands, '+quit'], check=True)
