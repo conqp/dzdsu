@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
 from dzdsu.constants import SERVER_BINARY
-from dzdsu.mods import Mod, mods_str, enabled_mods
+from dzdsu.mods import mods_str, enabled_mods
 from dzdsu.params import ServerParams
 
 
@@ -27,8 +27,8 @@ class Server(NamedTuple):
     name: str
     type: ServerType
     base_dir: Path
-    mods: list[Mod]
-    server_mods: list[Mod]
+    mods: list[int]
+    server_mods: list[int]
     params: ServerParams
 
     @classmethod
@@ -37,20 +37,14 @@ class Server(NamedTuple):
         if typ := json.get('type'):
             typ = ServerType(typ)
 
-        if mods := json.get('mods'):
-            mods = [Mod.from_json(json) for json in mods]
-
-        if server_mods := json.get('server_mods'):
-            mods = [Mod.from_json(json) for json in server_mods]
-
         params = ServerParams.from_json(json.get('params') or {})
 
         return cls(
             name,
             typ or ServerType.VANILLA,
             json['base_dir'],
-            mods or [],
-            server_mods or [],
+            json.get('mods') or [],
+            json.get('server_mods') or [],
             params
         )
 

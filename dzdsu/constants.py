@@ -9,6 +9,7 @@ __all__ = [
     'DAYZ_APP_ID',
     'JSON_FILE',
     'KEYS_GLOB',
+    'MODS_BASE_DIR',
     'SERVER_BINARY',
     'STEAMCMD'
 ]
@@ -17,6 +18,7 @@ __all__ = [
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 KEYS_GLOB = '@*/[Kk]eys/*.bikey'
+MODS_BASE_DIR = Path('steamapps/workshop/content/')
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'

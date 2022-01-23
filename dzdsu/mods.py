@@ -1,38 +1,28 @@
 """Modifications from the Steam workshop."""
 
-from typing import Iterable, Iterator, NamedTuple
+from pathlib import Path
+from typing import Iterable, Iterator
+
+from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR
 
 
-__all__ = ['Mod', 'enabled_mods', 'mod_names', 'mods_str']
+__all__ = ['enabled_mods', 'mod_paths', 'mods_str']
 
 
-class Mod(NamedTuple):
-    """Represents a mod."""
-
-    id: int
-    name: str
-    disabled: bool = False
-
-    @classmethod
-    def from_json(cls, json: dict):
-        """Creates an instance of Mod from a JSON-ish dict."""
-        return cls(json['id'], json['name'], json.get('disabled', False))
-
-
-def enabled_mods(mods: list[Mod]) -> Iterator[Mod]:
+def enabled_mods(mods: list[int]) -> Iterator[int]:
     """Yields enabled mods."""
 
-    return filter(lambda mod: mod.enabled, mods)
+    return filter(lambda mod: mod > 0, mods)
 
 
-def mod_names(mods: Iterable[Mod]) -> Iterator[str]:
+def mod_paths(mods: Iterable[int]) -> Iterator[Path]:
     """Yields names mods."""
 
-    return map(lambda mod: mod.name, mods)
+    return map(lambda mod: MODS_BASE_DIR / str(DAYZ_APP_ID) / str(mod), mods)
 
 
-def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
+def mods_str(mods: Iterable[int], *, sep: str = ';') -> str:
     """Returns a string representation of the given mods."""
 
-    return sep.join(mod_names(mods))
+    return sep.join(map(str, mod_paths(mods)))
 
