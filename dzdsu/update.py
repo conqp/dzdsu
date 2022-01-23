@@ -29,7 +29,7 @@ class Updater:
         return steamcmd(
             '+force_install_dir', str(server.base_dir),
             '+login', self.steam_user_name,
-            '+workshop_download_item', str(DAYZ_APP_ID), str(mod),
+            '+workshop_download_item', str(DAYZ_APP_ID), str(abs(mod)),
             'validate'
         )
 
