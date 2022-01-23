@@ -48,7 +48,7 @@ class Server(NamedTuple):
     @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        return [str(Path.cwd() / SERVER_BINARY), *self.get_binary_args()]
+        return [str(self.base_dir / SERVER_BINARY), *self.get_binary_args()]
 
 
 def load_servers(file: Path) -> dict[str, Server]:
