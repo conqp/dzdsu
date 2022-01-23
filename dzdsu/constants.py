@@ -20,7 +20,7 @@ __all__ = [
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
-KEYS_GLOB = '@*/[Kk]eys/*.bikey'
+KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 
 if name == 'nt':

@@ -4,7 +4,8 @@ from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
-from dzdsu.constants import JSON_FILE, KEYS_GLOB
+from dzdsu.constants import JSON_FILE
+from dzdsu.keys import install_keys
 from dzdsu.mods import list_mods
 from dzdsu.server import load_servers
 from dzdsu.update import Updater
@@ -48,17 +49,6 @@ def get_args(description: str = __doc__) -> Namespace:
         '-v', '--verbose', action='store_true', help='verbose logging output'
     )
     return parser.parse_args()
-
-
-def install_keys(base_dir: Path) -> None:
-    """Installs the mod keys."""
-
-    for key in base_dir.glob(KEYS_GLOB):
-        LOGGER.info('Installing key: %s', key.name)
-
-        with base_dir.joinpath('keys').joinpath(key.name).open('wb') as dst:
-            with key.open('rb') as src:
-                dst.write(src.read())
 
 
 def main() -> int:
