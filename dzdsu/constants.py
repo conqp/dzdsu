@@ -20,7 +20,7 @@ if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
     SERVER_BINARY = 'DayZServer_x64.exe'
 elif name == 'posix':
-    JSON_FILE = Path('/etc/servers.json')
+    JSON_FILE = Path('/etc/dzservers.json')
     SERVER_BINARY = 'DayZServer'
 else:
     raise OSError('Unsupported operating system.')

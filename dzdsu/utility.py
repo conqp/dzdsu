@@ -4,7 +4,7 @@ from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
-from dzdsu.constants import KEYS_GLOB
+from dzdsu.constants import JSON_FILE, KEYS_GLOB
 from dzdsu.server import load_servers
 from dzdsu.update import Updater
 
