@@ -1,14 +1,15 @@
 """DayZ server wrapper."""
 
 from argparse import ArgumentParser, Namespace
-from configparser import ConfigParser
-from multiprocessing import cpu_count
+from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 from subprocess import run
-from sys import exit
-from typing import Iterator
 
-from dzdsu.constants import SERVER_BINARY
+from dzdsu.constants import JSON_FILE
+from dzdsu.server import load_servers
+
+
+LOGGER = getLogger('dzds')
 
 
 def get_args(description: str = __doc__) -> Namespace:
@@ -16,8 +17,11 @@ def get_args(description: str = __doc__) -> Namespace:
 
     parser = ArgumentParser(description=description)
     parser.add_argument(
-        '-f', '--config-file', type=Path, default=CONFIG_FILE, metavar='file',
-        help='config file path'
+        '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
+        help='servers JSON file path'
+    )
+    parser.add_argument(
+        '-v', '--verbose', action='store_true', help='verbose logging'
     )
     return parser.parse_args()
 
@@ -26,13 +30,13 @@ def main() -> int:
     """Starts the DayZ server."""
 
     args = get_args()
-    config = CaseSensitiveConfigParser()
-    config.read(args.config_file)
-    binary = Path.cwd() / SERVER_BINARY
-    command = [str(binary), *get_parameters(config)]
-    completed_process = run(command, check=False)
-    return completed_process.returncode
+    basicConfig(level=INFO if args.verbose else WARNING)
+    servers = load_servers(args.servers_file)
 
+    try:
+        server = servers[args.server]
+    except KeyError:
+        LOGGER.error('No such server: %s', args.server)
+        return 2
 
-if __name__ == '__main__':
-    exit(main())
+    return run(server.command, check=False).returncode

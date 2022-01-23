@@ -4,8 +4,9 @@ from enum import Enum
 from functools import cache
 from json import load
 from pathlib import Path
-from typing import NamedTuple, Iterator
+from typing import Iterator, NamedTuple
 
+from dzdsu.constants import SERVER_BINARY
 from dzdsu.mods import Mod, mods_str, enabled_mods
 from dzdsu.params import ServerParams
 
@@ -26,6 +27,7 @@ class ServerType(Enum):
 class Server(NamedTuple):
     """A server."""
 
+    name: str
     type: ServerType
     base_dir: Path
     mods: list[Mod]
@@ -33,7 +35,7 @@ class Server(NamedTuple):
     params: ServerParams
 
     @classmethod
-    def from_json(cls, json: dict):
+    def from_json(cls, name: str, json: dict):
         """Creates a Server instance from a JSON-ish dict."""
         if typ := json.get('type'):
             typ = ServerType(typ)
@@ -47,8 +49,12 @@ class Server(NamedTuple):
         params = ServerParams.from_json(json.get('params') or {})
 
         return cls(
-            typ or ServerType.VANILLA, json['base_dir'], mods or [],
-            server_mods or [], params
+            name,
+            typ or ServerType.VANILLA,
+            json['base_dir'],
+            mods or [],
+            server_mods or [],
+            params
         )
 
     def get_binary_args(self) -> Iterator[str]:
@@ -62,19 +68,27 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
+    def command(self) -> list[str]:
+        """Returns the full command for running the server."""
+        return [str(Path.cwd() / SERVER_BINARY), *self.get_binary_args()]
+
+    @property
     def app_id(self) -> int:
         """Returns the Steam app ID."""
         return int(self.type)
 
 
-def load_servers(file: Path) -> list[Server]:
+def load_servers(file: Path) -> dict[str, Server]:
     """Loads servers."""
 
-    return [Server.from_json(json) for json in load_servers_json(file)]
+    return {
+        name: Server.from_json(name, json)
+        for name, json in load_servers_json(file).items()
+    }
 
 
 @cache
-def load_servers_json(file: Path) -> list[dict]:
+def load_servers_json(file: Path) -> dict:
     """Loads servers from a JSON file."""
 
     with file.open('r') as json:
