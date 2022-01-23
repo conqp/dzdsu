@@ -4,7 +4,7 @@ from enum import Enum
 from functools import cache
 from json import load
 from pathlib import Path
-from typing import Iterator, NamedTuple
+from typing import Any, Iterator, NamedTuple
 
 from dzdsu.constants import SERVER_BINARY
 from dzdsu.mods import Mod, mods_str, enabled_mods
@@ -19,9 +19,6 @@ class ServerType(Enum):
 
     VANILLA = 223350
     EXP = 1042420
-
-    def __int__(self):
-        return self.value
 
 
 class Server(NamedTuple):
@@ -75,7 +72,7 @@ class Server(NamedTuple):
     @property
     def app_id(self) -> int:
         """Returns the Steam app ID."""
-        return int(self.type)
+        return self.type.value
 
 
 def load_servers(file: Path) -> dict[str, Server]:
@@ -88,7 +85,7 @@ def load_servers(file: Path) -> dict[str, Server]:
 
 
 @cache
-def load_servers_json(file: Path) -> dict:
+def load_servers_json(file: Path) -> dict[str, Any]:
     """Loads servers from a JSON file."""
 
     with file.open('r') as json:
