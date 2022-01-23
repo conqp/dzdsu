@@ -4,10 +4,17 @@ from os import environ, name
 from pathlib import Path
 
 
-__all__ = ['CONFIG_FILE', 'JSON_FILE', 'SERVER_BINARY', 'STEAMCMD']
+__all__ = [
+    'CONFIG_FILE',
+    'JSON_FILE',
+    'KEYS_GLOB',
+    'SERVER_BINARY',
+    'STEAMCMD'
+]
 
 
 CONFIG_FILE = 'serverDZ.cfg'
+KEYS_GLOB = '@*/[Kk]eys/*.bikey'
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'

@@ -9,7 +9,7 @@ from dzdsu.constants import JSON_FILE
 from dzdsu.server import load_servers
 
 
-LOGGER = getLogger('dzds')
+LOGGER = getLogger('dzdsw')
 
 
 def get_args(description: str = __doc__) -> Namespace:

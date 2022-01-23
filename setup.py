@@ -13,7 +13,8 @@ setup(
     py_modules=['mines'],
     entry_points={
         'console_scripts': [
-            'dzds = dzdsu.wrapper:main'
+            'dzdsu = dzdsu.utility:main',
+            'dzdsw = dzdsu.wrapper:main'
         ]
     },
     url='https://github.com/conqp/dzdsu',
