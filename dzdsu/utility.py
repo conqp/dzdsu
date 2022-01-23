@@ -5,6 +5,7 @@ from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
 from dzdsu.constants import JSON_FILE, KEYS_GLOB
+from dzdsu.mods import list_mods
 from dzdsu.server import load_servers
 from dzdsu.update import Updater
 
@@ -31,13 +32,17 @@ def get_args(description: str = __doc__) -> Namespace:
         '-K', '--install-keys', action='store_true', help='install mod keys'
     )
     parser.add_argument(
+        '-M', '--list-mods', action='store_true', help="list the server's mods"
+    )
+    parser.add_argument(
         '-U', '--update', metavar='steam_user', help='update server and mods'
     )
     parser.add_argument(
         '-s', '--update-server', action='store_true', help='update server'
     )
     parser.add_argument(
-        '-m', '--update-mods', action='store_true', help='update server mods'
+        '-m', '--update-mods', action='store_true',
+        help="update the server's mods"
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging output'
@@ -80,5 +85,9 @@ def main() -> int:
 
         if args.update_mods:
             updater.update_mods(server)
+
+    if args.list_mods:
+        list_mods(server.mods, prefix='Mod:')
+        list_mods(server.server_mods, prefix='Server mod:')
 
     return 0
