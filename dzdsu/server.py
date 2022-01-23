@@ -1,31 +1,23 @@
 """Server representation."""
 
-from enum import Enum
 from functools import cache
 from json import load
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
-from dzdsu.constants import SERVER_BINARY
+from dzdsu.constants import DAYZ_SERVER_APP_ID, SERVER_BINARY
 from dzdsu.mods import mods_str, enabled_mods
 from dzdsu.params import ServerParams
 
 
-__all__ = ['ServerType', 'Server', 'load_servers', 'load_servers_json']
-
-
-class ServerType(Enum):
-    """Available server versions."""
-
-    VANILLA = 223350
-    EXP = 1042420
+__all__ = ['Server', 'load_servers', 'load_servers_json']
 
 
 class Server(NamedTuple):
     """A server."""
 
     name: str
-    type: ServerType
+    app_id: int
     base_dir: Path
     mods: list[int]
     server_mods: list[int]
@@ -34,18 +26,13 @@ class Server(NamedTuple):
     @classmethod
     def from_json(cls, name: str, json: dict):
         """Creates a Server instance from a JSON-ish dict."""
-        if typ := json.get('type'):
-            typ = ServerType(typ)
-
-        params = ServerParams.from_json(json.get('params') or {})
-
         return cls(
             name,
-            typ or ServerType.VANILLA,
+            json.get('app_id', DAYZ_SERVER_APP_ID),
             json['base_dir'],
             json.get('mods') or [],
             json.get('server_mods') or [],
-            params
+            ServerParams.from_json(json.get('params') or {})
         )
 
     def get_binary_args(self) -> Iterator[str]:
@@ -62,11 +49,6 @@ class Server(NamedTuple):
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
         return [str(Path.cwd() / SERVER_BINARY), *self.get_binary_args()]
-
-    @property
-    def app_id(self) -> int:
-        """Returns the Steam app ID."""
-        return self.type.value
 
 
 def load_servers(file: Path) -> dict[str, Server]:

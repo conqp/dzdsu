@@ -7,6 +7,7 @@ from pathlib import Path
 __all__ = [
     'CONFIG_FILE',
     'DAYZ_APP_ID',
+    'DAYZ_SERVER_APP_ID',
     'JSON_FILE',
     'KEYS_GLOB',
     'MODS_BASE_DIR',
@@ -17,6 +18,7 @@ __all__ = [
 
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
+DAYZ_SERVER_APP_ID = 223350
 KEYS_GLOB = '@*/[Kk]eys/*.bikey'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 

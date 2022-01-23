@@ -46,4 +46,4 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
-    return run(server.command, check=False).returncode
+    return run(server.command, check=False, cwd=server.base_dir).returncode
