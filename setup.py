@@ -10,7 +10,7 @@ setup(
     author='Richard Neumann',
     author_email='mail@richard-neumann.de',
     python_requires='>=3.9',
-    py_modules=['mines'],
+    packages=['dzdsu'],
     entry_points={
         'console_scripts': [
             'dzdsu = dzdsu.utility:main',
