@@ -2,15 +2,13 @@
 
 from subprocess import CalledProcessError, CompletedProcess, run
 
+from dzdsu.constants import STEAMCMD
 from dzdsu.exceptions import FailedModUpdates
 from dzdsu.mods import Mod
 from dzdsu.server import Server
 
 
 __all__ = ['Updater', 'steamcmd']
-
-
-STEAMCMD = 'steamcmd'
 
 
 class Updater:

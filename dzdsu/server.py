@@ -4,9 +4,10 @@ from enum import Enum
 from functools import cache
 from json import load
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Iterator
 
-from dzdsu.mods import Mod
+from dzdsu.mods import Mod, mods_str, enabled_mods
+from dzdsu.params import ServerParams
 
 
 __all__ = ['ServerType', 'Server', 'load_servers', 'load_servers_json']
@@ -27,7 +28,9 @@ class Server(NamedTuple):
 
     type: ServerType
     base_dir: Path
-    mods: set[Mod]
+    mods: list[Mod]
+    server_mods: list[Mod]
+    params: ServerParams
 
     @classmethod
     def from_json(cls, json: dict):
@@ -36,9 +39,27 @@ class Server(NamedTuple):
             typ = ServerType(typ)
 
         if mods := json.get('mods'):
-            mods = {Mod.from_json(json) for json in mods}
+            mods = [Mod.from_json(json) for json in mods]
 
-        return cls(typ or ServerType.VANILLA, json['base_dir'], mods or set())
+        if server_mods := json.get('server_mods'):
+            mods = [Mod.from_json(json) for json in server_mods]
+
+        params = ServerParams.from_json(json.get('params') or {})
+
+        return cls(
+            typ or ServerType.VANILLA, json['base_dir'], mods or [],
+            server_mods or [], params
+        )
+
+    def get_binary_args(self) -> Iterator[str]:
+        """Yields arguments for the server binary."""
+        yield from self.params.get_binary_args()
+
+        if mods := mods_str(enabled_mods(self.mods)):
+            yield f'-mod={mods}'
+
+        if mods := mods_str(enabled_mods(self.server_mods)):
+            yield f'-serverMod={mods}'
 
     @property
     def app_id(self) -> int:
