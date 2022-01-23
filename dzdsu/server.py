@@ -1,15 +1,25 @@
 """Server representation."""
 
+from enum import Enum
 from functools import cache
 from json import load
 from pathlib import Path
 from typing import NamedTuple
 
-from dzdsu.emuerations import ServerType
 from dzdsu.mods import Mod
 
 
-__all__ = ['Server', 'load_servers', 'load_servers_json']
+__all__ = ['ServerType', 'Server', 'load_servers', 'load_servers_json']
+
+
+class ServerType(Enum):
+    """Available server versions."""
+
+    VANILLA = 223350
+    EXP = 1042420
+
+    def __int__(self):
+        return self.value
 
 
 class Server(NamedTuple):
@@ -22,10 +32,18 @@ class Server(NamedTuple):
     @classmethod
     def from_json(cls, json: dict):
         """Creates a Server instance from a JSON-ish dict."""
-        if mods := json.get('mods'):
-            mods = {Mod(ident, name) for ident, name in mods.items()}
+        if typ := json.get('type'):
+            typ = ServerType(typ)
 
-        return cls(ServerType(json['type']), json['base_dir'], mods or set())
+        if mods := json.get('mods'):
+            mods = {Mod.from_json(json) for json in mods}
+
+        return cls(typ or ServerType.VANILLA, json['base_dir'], mods or set())
+
+    @property
+    def app_id(self) -> int:
+        """Returns the Steam app ID."""
+        return int(self.type)
 
 
 def load_servers(file: Path) -> list[Server]:
