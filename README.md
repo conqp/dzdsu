@@ -115,10 +115,29 @@ The outermost object defines key-value pairs of server names and server objects.
     "description": "List of Mods",
     "type": "array",
     "items": {
-        "type": "integer"
+        "type": "Mod"
     },
     "minItems": 0,
     "uniqueItems": true
+}
+```
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Mod",
+    "description": "A single Mod",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The steam workshop ID",
+            "type": "integer"
+        },
+        "name": {
+            "description": "A human-readable name",
+            "type": "string"
+        }
+    },
+    "required": ["id"]
 }
 ```
 #### Disable mods
