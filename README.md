@@ -150,3 +150,18 @@ The default servers file location differs based on the operating system.
 On Windows the default servers file is expected to be under `%PROGRAMFILES%\dzsrv\servers.json`.
 #### POSIX
 On POSIX Systems the default servers file is expected to be under `/etc/dzservers.json`.
+
+## Command line tools
+The server utilities ship the two following command line programs:
+### `dzdsw`
+A wrapper script to start a dedicated server. Use
+```shell
+$ dzdsw --h
+```
+to get further information.
+### `dzdsu`
+A utility script to update a dedicated server and / or its mods. Use
+```shell
+$ dzdsu --h
+```
+to get further information.
