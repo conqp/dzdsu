@@ -1,5 +1,6 @@
 """Game and mod updates."""
 
+from logging import getLogger
 from subprocess import CalledProcessError, CompletedProcess, run
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
@@ -9,6 +10,9 @@ from dzdsu.server import Server
 
 
 __all__ = ['Updater', 'steamcmd']
+
+
+LOGGER = getLogger('Updater')
 
 
 class Updater:
@@ -27,6 +31,7 @@ class Updater:
 
     def update_mod(self, server: Server, mod: Mod) -> CompletedProcess:
         """Updates a server's mod."""
+        LOGGER.info('Updating mod: %s', mod)
         return steamcmd(
             '+force_install_dir', str(server.base_dir),
             '+login', self.steam_user_name,
