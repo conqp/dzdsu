@@ -6,7 +6,7 @@ from pathlib import Path
 
 from dzdsu.constants import JSON_FILE
 from dzdsu.keys import install_keys
-from dzdsu.mods import list_mods
+from dzdsu.mods import print_mods
 from dzdsu.server import load_servers
 from dzdsu.update import Updater
 
@@ -77,7 +77,7 @@ def main() -> int:
             updater.update_mods(server)
 
     if args.list_mods:
-        list_mods(server.mods, prefix='Mod:')
-        list_mods(server.server_mods, prefix='Server mod:')
+        print_mods(server.mods, prefix='Mod:')
+        print_mods(server.server_mods, prefix='Server mod:')
 
     return 0

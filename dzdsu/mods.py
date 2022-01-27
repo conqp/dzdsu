@@ -1,68 +1,75 @@
 """Modifications from the Steam workshop."""
 
-from functools import cache
-from json import load
+from __future__ import annotations
 from pathlib import Path
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
 from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR, MOD_NAMES
 
 
 __all__ = [
-    'enabled_mods',
-    'list_mods',
-    'load_mod_names',
+    'Mod',
     'mod_paths',
-    'mods_str'
+    'mods_str',
+    'print_mods'
 ]
 
 
-def enabled_mods(mods: list[int]) -> Iterator[int]:
-    """Yields enabled mods."""
+class Mod(NamedTuple):
+    """A server mod."""
 
-    return filter(lambda mod: mod > 0, mods)
+    id: int
+    name: Optional[str] = None
+    enabled: bool = True
+
+    def __str__(self) -> str:
+        return str(self.id) if self.name is None else self.name
+
+    @classmethod
+    def from_int(cls, integer: int, *, name: Optional[str] = None) -> Mod:
+        """Creates a mod from an integer."""
+        if integer == 0:
+            raise ValueError(f'Invalid mod ID: {integer}')
+
+        if integer < 0:
+            return cls(abs(integer), name, enabled=False)
+
+        return cls(integer, name)
+
+    @classmethod
+    def from_json(cls, json: dict[str, Union[int, str]]) -> Mod:
+        """Creates a mod from a JSON-ish dict."""
+        return cls.from_int(json['id'], name=json.get('name'))
+
+    @classmethod
+    def from_value(cls, value: Union[int, dict[str, Union[int, str]]]) -> Mod:
+        """Creates a mod from an int or JSON value."""
+        if isinstance(value, int):
+            return cls.from_int(value)
+
+        if isinstance(value, dict):
+            return cls.from_json(value)
+
+        raise TypeError(f'Cannot create mod from: {value} ({type(value)})')
 
 
-def get_mod_name(mod: int, *, file: Path = MOD_NAMES) -> str:
-    """Returns the mod name."""
+def mod_paths(mods: Iterable[Mod]) -> Iterator[Path]:
+    """Yields mod paths."""
 
-    try:
-        return load_mod_names(file)[mod]
-    except KeyError:
-        return str(mod)
+    return map(lambda mod: MODS_BASE_DIR / f'{DAYZ_APP_ID}/{mod.id}', mods)
 
 
-def list_mods(
-        mods: Iterable[int], *,
-        prefix: str = 'Mod:',
-        file: Path = MOD_NAMES
+def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
+    """Returns a string representation of the given mods."""
+
+    return sep.join(map(str, mod_paths(mods)))
+
+
+def print_mods(
+        mods: Iterable[Mod], *,
+        prefix: str = 'Mod:'
 ) -> None:
     """Lists the respective mods."""
 
     for mod in mods:
-        print(prefix, get_mod_name(mod, file=file))
-
-
-@cache
-def load_mod_names(file: Path) -> dict[int, str]:
-    """Loads mod names from the given file."""
-
-    try:
-        with file.open('r') as json:
-            mods = load(json)
-    except FileNotFoundError:
-        return {}
-
-    return {ident: name for name, ident in mods.items()}
-
-
-def mod_paths(mods: Iterable[int]) -> Iterator[Path]:
-    """Yields mod paths."""
-
-    return map(lambda mod: MODS_BASE_DIR / str(DAYZ_APP_ID) / str(mod), mods)
-
-
-def mods_str(mods: Iterable[int], *, sep: str = ';') -> str:
-    """Returns a string representation of the given mods."""
-
-    return sep.join(map(str, mod_paths(mods)))
+        print(prefix, mode)

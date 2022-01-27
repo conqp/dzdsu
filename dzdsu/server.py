@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
 from dzdsu.constants import DAYZ_SERVER_APP_ID, SERVER_BINARY
-from dzdsu.mods import mods_str, enabled_mods
+from dzdsu.mods import Mod, mods_str
 from dzdsu.params import ServerParams
 
 
@@ -19,8 +19,8 @@ class Server(NamedTuple):
     name: str
     app_id: int
     base_dir: Path
-    mods: list[int]
-    server_mods: list[int]
+    mods: list[Mod]
+    server_mods: list[Mod]
     params: ServerParams
 
     @classmethod
@@ -30,8 +30,8 @@ class Server(NamedTuple):
             name,
             json.get('app_id', DAYZ_SERVER_APP_ID),
             Path(json['base_dir']),
-            json.get('mods') or [],
-            json.get('server_mods') or [],
+            [Mod.from_value(mod) for mod in (json.get('mods') or [])],
+            [Mod.from_value(mod) for mod in (json.get('server_mods') or [])],
             ServerParams.from_json(json.get('params') or {})
         )
 
@@ -39,10 +39,10 @@ class Server(NamedTuple):
         """Yields arguments for the server binary."""
         yield from self.params.get_binary_args()
 
-        if mods := mods_str(enabled_mods(self.mods)):
+        if mods := mods_str(mod for mod in self.mods if mod.enabled):
             yield f'-mod={mods}'
 
-        if mods := mods_str(enabled_mods(self.server_mods)):
+        if mods := mods_str(mod for mod in self.server_mods if mod.enabled):
             yield f'-serverMod={mods}'
 
     @property
