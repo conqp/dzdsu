@@ -34,8 +34,7 @@ class Updater:
         return steamcmd(
             '+force_install_dir', str(server.base_dir),
             '+login', self.steam_user_name,
-            *chain(*(update_mod_command(mod) for mod in server.mods)),
-            'validate'
+            *chain(*(update_mod_command(mod) for mod in server.mods))
         )
 
     def update(self, server: Server) -> None:
@@ -53,4 +52,6 @@ def steamcmd(*commands: str) -> CompletedProcess:
 def update_mod_command(mod: Mod) -> list[str]:
     """Returns a steamcmd command to update the given mod."""
 
-    return ['+workshop_download_item', str(DAYZ_APP_ID), str(mod.id)]
+    return [
+        '+workshop_download_item', str(DAYZ_APP_ID), str(mod.id), 'validate'
+    ]
