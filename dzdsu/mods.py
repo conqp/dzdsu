@@ -72,4 +72,4 @@ def print_mods(
     """Lists the respective mods."""
 
     for mod in mods:
-        print(prefix, mode)
+        print(prefix, mod)
