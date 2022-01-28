@@ -23,7 +23,10 @@ class Mod(NamedTuple):
     enabled: bool = True
 
     def __str__(self) -> str:
-        return str(self.id) if self.name is None else self.name
+        if self.name is None:
+            return str(self.id)
+
+        return f'{self.name} ({self.id})'
 
     @classmethod
     def from_int(cls, integer: int, *, name: Optional[str] = None) -> Mod:
