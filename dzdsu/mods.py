@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
-from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR, MOD_NAMES
+from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR
 
 
 __all__ = [

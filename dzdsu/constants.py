@@ -11,7 +11,6 @@ __all__ = [
     'JSON_FILE',
     'KEYS_GLOB',
     'MODS_BASE_DIR',
-    'MOD_NAMES',
     'SERVER_BINARY',
     'STEAMCMD'
 ]
@@ -25,11 +24,9 @@ MODS_BASE_DIR = Path('steamapps/workshop/content/')
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
-    MOD_NAMES = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'mods.json'
     SERVER_BINARY = 'DayZServer_x64.exe'
 elif name == 'posix':
     JSON_FILE = Path('/etc/dzservers.json')
-    MOD_NAMES = Path('/etc/dzmods.json')
     SERVER_BINARY = 'DayZServer'
 else:
     raise OSError('Unsupported operating system.')
