@@ -55,7 +55,7 @@ class Mod(NamedTuple):
     @property
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
-        return MODS_BASE_DIR / DAYZ_APP_ID / str(self.id)
+        return MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
 
     @property
     def url(self) -> str:
