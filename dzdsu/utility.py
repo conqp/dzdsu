@@ -7,7 +7,7 @@ from pathlib import Path
 from dzdsu.constants import JSON_FILE
 from dzdsu.keys import install_keys
 from dzdsu.mods import print_mods
-from dzdsu.server import load_servers
+from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
 
 
@@ -51,6 +51,31 @@ def get_args(description: str = __doc__) -> Namespace:
     return parser.parse_args()
 
 
+def update(server: Server, args: Namespace) -> None:
+    """Perform server and mod updates."""
+
+    updater = Updater(args.update)
+
+    if args.update_server:
+        updater.update_server(server)
+        print()
+
+    if args.update_mods:
+        updater.update_mods(server)
+        print()
+
+
+def list_mods(server: Server) -> None:
+    """List mods."""
+
+    print_mods(server.mods, header='Mods')
+
+    if server.mods and server.server_mods:
+        print()
+
+    print_mods(server.server_mods, header='Server mods')
+
+
 def main() -> int:
     """Update mods."""
 
@@ -68,22 +93,9 @@ def main() -> int:
         install_keys(args.directory)
 
     if args.update:
-        updater = Updater(args.update)
-
-        if args.update_server:
-            updater.update_server(server)
-            print()
-
-        if args.update_mods:
-            updater.update_mods(server)
-            print()
+        update(server, args)
 
     if args.list_mods:
-        print_mods(server.mods, header='Mods')
-
-        if server.mods and server.server_mods:
-            print()
-
-        print_mods(server.server_mods, header='Server mods')
+        list_mods(server)
 
     return 0
