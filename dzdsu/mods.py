@@ -4,7 +4,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
-from dzdsu.constants import DAYZ_APP_ID, LINK, MODS_BASE_DIR, WORKSHOP_URL
+from dzdsu.constants import BOLD
+from dzdsu.constants import DAYZ_APP_ID
+from dzdsu.constants import ITALIC
+from dzdsu.constants import LINK
+from dzdsu.constants import MODS_BASE_DIR
+from dzdsu.constants import WORKSHOP_URL
 
 
 __all__ = [
@@ -72,9 +77,11 @@ def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
 
 def print_mods(
         mods: Iterable[Mod], *,
-        prefix: str = 'Mod:'
+        header: str = 'Mods'
 ) -> None:
     """Lists the respective mods."""
 
+    print(BOLD.format(header))
+
     for mod in mods:
-        print(prefix, mod)
+        print(mod if mod.enabled else ITALIC.format(mod))
