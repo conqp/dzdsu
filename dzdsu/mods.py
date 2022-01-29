@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
-from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR, WORKSHOP_URL
+from dzdsu.constants import DAYZ_APP_ID, LINK, MODS_BASE_DIR, WORKSHOP_URL
 
 
 __all__ = [
@@ -23,7 +23,7 @@ class Mod(NamedTuple):
     enabled: bool = True
 
     def __str__(self) -> str:
-        return f'{self.name or self.id} ({self.url})'
+        return LINK.format(url=self.url, text=self.name or self.id)
 
     @classmethod
     def from_int(cls, integer: int, *, name: Optional[str] = None) -> Mod:

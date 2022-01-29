@@ -10,6 +10,7 @@ __all__ = [
     'DAYZ_SERVER_APP_ID',
     'JSON_FILE',
     'KEYS_GLOB',
+    'LINK',
     'MODS_BASE_DIR',
     'SERVER_BINARY',
     'STEAMCMD',
@@ -21,6 +22,7 @@ CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
+LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\\n'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
