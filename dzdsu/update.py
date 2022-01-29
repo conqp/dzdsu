@@ -1,10 +1,10 @@
 """Game and mod updates."""
 
+from itertools import chain
 from logging import getLogger
-from subprocess import CalledProcessError, CompletedProcess, run
+from subprocess import CompletedProcess, run
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
-from dzdsu.exceptions import FailedModUpdates
 from dzdsu.mods import Mod
 from dzdsu.server import Server
 
@@ -29,28 +29,13 @@ class Updater:
             '+app_update', str(server.app_id), 'validate'
         )
 
-    def update_mod(self, server: Server, mod: Mod) -> CompletedProcess:
-        """Updates a server's mod."""
-        LOGGER.info('Updating mod: %s', mod)
+    def update_mods(self, server: Server) -> CompletedProcess:
+        """Updates the server's mods."""
         return steamcmd(
             '+force_install_dir', str(server.base_dir),
             '+login', self.steam_user_name,
-            '+workshop_download_item', str(DAYZ_APP_ID), str(mod.id),
-            'validate'
+            *chain(*(update_mod_command(mod) for mod in server.mods))
         )
-
-    def update_mods(self, server: Server) -> None:
-        """Updates the server's mods."""
-        failed_updates = set()
-
-        for mod in server.mods:
-            try:
-                self.update_mod(server, mod)
-            except CalledProcessError:
-                failed_updates.add(mod)
-
-        if failed_updates:
-            raise FailedModUpdates(failed_updates)
 
     def update(self, server: Server) -> None:
         """Updates server and mods."""
@@ -62,3 +47,11 @@ def steamcmd(*commands: str) -> CompletedProcess:
     """Invokes steamcmd and exits."""
 
     return run([STEAMCMD, *commands, '+quit'], check=True)
+
+
+def update_mod_command(mod: Mod) -> list[str]:
+    """Returns a steamcmd command to update the given mod."""
+
+    return [
+        '+workshop_download_item', str(DAYZ_APP_ID), str(mod.id), 'validate'
+    ]
