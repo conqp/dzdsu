@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from pathlib import Path
-from typing import Iterable, Iterator, NamedTuple, Optional, Union
+from typing import Iterable, NamedTuple, Optional, Union
 
 from dzdsu.constants import BOLD
 from dzdsu.constants import DAYZ_APP_ID
@@ -12,12 +12,7 @@ from dzdsu.constants import MODS_BASE_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = [
-    'Mod',
-    'mod_paths',
-    'mods_str',
-    'print_mods'
-]
+__all__ = ['Mod', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -58,21 +53,20 @@ class Mod(NamedTuple):
         raise TypeError(f'Cannot create mod from: {value} ({type(value)})')
 
     @property
+    def path(self) -> Path:
+        """Returns the relative path to the local mod directory."""
+        return MODS_BASE_DIR / DAYZ_APP_ID / str(self.id)
+
+    @property
     def url(self) -> str:
         """Returns the Steam Workshop URL."""
         return WORKSHOP_URL.format(self.id)
 
 
-def mod_paths(mods: Iterable[Mod]) -> Iterator[Path]:
-    """Yields mod paths."""
-
-    return map(lambda mod: MODS_BASE_DIR / f'{DAYZ_APP_ID}/{mod.id}', mods)
-
-
 def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
     """Returns a string representation of the given mods."""
 
-    return sep.join(map(str, mod_paths(mods)))
+    return sep.join(str(mod.path) for mod in mods)
 
 
 def print_mods(
