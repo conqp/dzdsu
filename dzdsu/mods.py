@@ -81,6 +81,9 @@ def print_mods(
 ) -> None:
     """Lists the respective mods."""
 
+    if not mods:
+        return
+
     print(BOLD.format(header))
 
     for mod in mods:
