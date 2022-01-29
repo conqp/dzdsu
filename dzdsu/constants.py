@@ -5,9 +5,11 @@ from pathlib import Path
 
 
 __all__ = [
+    'BOLD',
     'CONFIG_FILE',
     'DAYZ_APP_ID',
     'DAYZ_SERVER_APP_ID',
+    'ITALIC',
     'JSON_FILE',
     'KEYS_GLOB',
     'LINK',
@@ -22,9 +24,13 @@ CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
-LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\\n'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
+STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
+
+BOLD = '\033[1m{}\033[0m'
+ITALIC = '\033[3m{}\033[0m'
+LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\\n'
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
@@ -34,6 +40,3 @@ elif name == 'posix':
     SERVER_BINARY = 'DayZServer'
 else:
     raise OSError('Unsupported operating system.')
-
-
-STEAMCMD = 'steamcmd'
