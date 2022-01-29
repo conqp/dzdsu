@@ -77,7 +77,9 @@ def main() -> int:
             updater.update_mods(server)
 
     if args.list_mods:
-        if print_mods(server.mods, header='Mods'):
+        print_mods(server.mods, header='Mods')
+
+        if server.mods and server.server_mods:
             print()
 
         print_mods(server.server_mods, header='Server mods')

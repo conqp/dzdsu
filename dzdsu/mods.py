@@ -78,15 +78,13 @@ def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
 def print_mods(
         mods: Iterable[Mod], *,
         header: str = 'Mods'
-) -> bool:
+) -> None:
     """Lists the respective mods."""
 
     if not mods:
-        return False
+        return
 
     print(BOLD.format(header))
 
     for mod in mods:
         print(mod if mod.enabled else ITALIC.format(mod))
-
-    return True
