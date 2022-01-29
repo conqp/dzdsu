@@ -12,7 +12,8 @@ __all__ = [
     'KEYS_GLOB',
     'MODS_BASE_DIR',
     'SERVER_BINARY',
-    'STEAMCMD'
+    'STEAMCMD',
+    'WORKSHOP_URL'
 ]
 
 
@@ -21,6 +22,7 @@ DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
+WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'

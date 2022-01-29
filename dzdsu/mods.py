@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
-from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR
+from dzdsu.constants import DAYZ_APP_ID, MODS_BASE_DIR, WORKSHOP_URL
 
 
 __all__ = [
@@ -23,10 +23,7 @@ class Mod(NamedTuple):
     enabled: bool = True
 
     def __str__(self) -> str:
-        if self.name is None:
-            return str(self.id)
-
-        return f'{self.name} ({self.id})'
+        return f'{self.name or self.id} ({self.url})'
 
     @classmethod
     def from_int(cls, integer: int, *, name: Optional[str] = None) -> Mod:
@@ -54,6 +51,11 @@ class Mod(NamedTuple):
             return cls.from_json(value)
 
         raise TypeError(f'Cannot create mod from: {value} ({type(value)})')
+
+    @property
+    def url(self) -> str:
+        """Returns the Steam Workshop URL."""
+        return WORKSHOP_URL.format(self.id)
 
 
 def mod_paths(mods: Iterable[Mod]) -> Iterator[Path]:
