@@ -90,7 +90,7 @@ def main() -> int:
         return 2
 
     if args.install_keys:
-        install_keys(args.directory)
+        install_keys(server.base_dir)
 
     if args.update:
         update(server, args)
