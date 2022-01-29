@@ -30,7 +30,7 @@ WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
 BOLD = '\033[1m{}\033[0m'
 ITALIC = '\033[3m{}\033[0m'
-LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\\n'
+LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\'
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
