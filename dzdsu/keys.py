@@ -12,7 +12,7 @@ __all__ = ['install_keys']
 LOGGER = getLogger('keys-installer')
 
 
-def install_keys(base_dir: Path) -> None:
+def install_keys(base_dir: Path, *, overwrite: bool = False) -> None:
     """Installs the mod keys."""
 
     for src_file in (base_dir / MODS_BASE_DIR).glob(KEYS_GLOB):
@@ -20,6 +20,9 @@ def install_keys(base_dir: Path) -> None:
 
         if (dst_file := (base_dir / 'keys' / src_file.name)).exists():
             LOGGER.warning('Key "%s" already installed.', name)
+
+            if not overwrite:
+                continue
 
         with dst_file.open('wb') as dst, src_file.open('rb') as src:
             dst.write(src.read())
