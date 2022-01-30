@@ -24,5 +24,5 @@ def install_keys(base_dir: Path, *, overwrite: bool = False) -> None:
             if not overwrite:
                 continue
 
-        with dst_file.open('wb') as dst, src_file.open('rb') as src:
+        with src_file.open('rb') as src, dst_file.open('wb') as dst:
             dst.write(src.read())
