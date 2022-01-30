@@ -46,6 +46,9 @@ def get_args(description: str = __doc__) -> Namespace:
         help="update the server's mods"
     )
     parser.add_argument(
+        '--overwrite', action='store_true', help="overwrite existing key files"
+    )
+    parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging output'
     )
     return parser.parse_args()
@@ -90,7 +93,7 @@ def main() -> int:
         return 2
 
     if args.install_keys:
-        install_keys(server.base_dir)
+        install_keys(server.base_dir, overwrite=args.overwrite)
 
     if args.update:
         update(server, args)
