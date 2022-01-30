@@ -18,7 +18,7 @@ def install_keys(base_dir: Path, *, overwrite: bool = False) -> None:
     for src_file in (base_dir / MODS_BASE_DIR).glob(KEYS_GLOB):
         LOGGER.info('Installing key: %s', (name := src_file.name))
 
-        if (dst_file := (base_dir / 'keys' / src_file.name)).exists():
+        if (dst_file := (base_dir / 'keys' / name)).exists():
             LOGGER.warning('Key "%s" already installed.', name)
 
             if not overwrite:
