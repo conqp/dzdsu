@@ -156,12 +156,12 @@ The server utilities ship the two following command line programs:
 ### `dzdsw`
 A wrapper script to start a dedicated server. Use
 ```shell
-$ dzdsw --h
+$ dzdsw -h
 ```
 to get further information.
 ### `dzdsu`
 A utility script to update a dedicated server and / or its mods. Use
 ```shell
-$ dzdsu --h
+$ dzdsu -h
 ```
 to get further information.
