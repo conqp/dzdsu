@@ -28,7 +28,7 @@ DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
-PBO_GLOB = 'addons/*.pbo'
+PBO_GLOB = '*.pbo'
 STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
