@@ -1,7 +1,6 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
-from errno import ENOENT
 from os import name
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
@@ -64,20 +63,17 @@ class Mod(NamedTuple):
     @property
     def addons(self) -> Path:
         """Returns the path to the addons directory."""
-        for path in self.path.glob(ADDONS_GLOB):
-            if path.is_dir():
-                return path
-
-        raise FileNotFoundError(ENOENT, ADDONS_GLOB, 'Addons dir not found.')
+        return self.path / 'addons'
 
     @property
-    def keys(self) -> Path:
-        """Returns the path to the keys directory."""
-        for path in self.path.glob(KEYS_DIR_GLOB):
-            if path.is_dir():
-                return path
+    def addons_glob(self) -> Iterator[Path]:
+        """Returns available paths to the addons directory."""
+        return self.path.glob(ADDONS_GLOB)
 
-        raise FileNotFoundError(ENOENT, KEYS_DIR_GLOB, 'Keys dir not found.')
+    @property
+    def keys_glob(self) -> Iterator[Path]:
+        """Returns available paths to the keys directory."""
+        return self.path.glob(KEYS_DIR_GLOB)
 
     @property
     def pbos(self) -> Iterator[Path]:
@@ -110,8 +106,11 @@ def fix_paths(mod: Mod) -> None:
     if name != 'posix':
         return
 
-    link_to_lowercase(mod.addons)
-    link_to_lowercase(mod.keys)
+    for path in mod.addons_glob:
+        link_to_lowercase(path)
+
+    for path in mod.keys_glob:
+        link_to_lowercase(path)
 
     for pbo in mod.pbos:
         link_to_lowercase(pbo)
