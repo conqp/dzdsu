@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 __all__ = [
+    'ADDONS_GLOB',
     'BOLD',
     'CONFIG_FILE',
     'DAYZ_APP_ID',
@@ -14,17 +15,20 @@ __all__ = [
     'KEYS_GLOB',
     'LINK',
     'MODS_BASE_DIR',
+    'PBO_GLOB',
     'SERVER_BINARY',
     'STEAMCMD',
     'WORKSHOP_URL'
 ]
 
 
+ADDONS_GLOB = '[Aa][Dd][Dd][Oo][Nn][Ss]'
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
+PBO_GLOB = 'addons/*.pbo'
 STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 

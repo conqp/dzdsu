@@ -1,14 +1,17 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
+from errno import ENOENT
 from pathlib import Path
-from typing import Iterable, NamedTuple, Optional, Union
+from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
+from dzdsu.constants import ADDONS_GLOB
 from dzdsu.constants import BOLD
 from dzdsu.constants import DAYZ_APP_ID
 from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_BASE_DIR
+from dzdsu.constants import PBO_GLOB
 from dzdsu.constants import WORKSHOP_URL
 
 
@@ -56,6 +59,20 @@ class Mod(NamedTuple):
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
         return MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
+
+    @property
+    def addons(self) -> Path:
+        """Returns the path to the addons directory."""
+        for path in self.path.glob(ADDONS_GLOB):
+            if path.is_dir():
+                return path
+
+        raise FileNotFoundError(ENOENT, ADDONS_GLOB, 'Addons not found.')
+
+    @property
+    def pbos(self) -> Iterator[Path]:
+        """Yields paths to .pbo files."""
+        return self.addons.glob(PBO_GLOB)
 
     @property
     def url(self) -> str:
