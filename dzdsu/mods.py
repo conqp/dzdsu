@@ -10,9 +10,9 @@ from dzdsu.constants import ADDONS_GLOB
 from dzdsu.constants import BOLD
 from dzdsu.constants import DAYZ_APP_ID
 from dzdsu.constants import ITALIC
+from dzdsu.constants import KEYS_DIR_GLOB
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_BASE_DIR
-from dzdsu.constants import PBO_GLOB
 from dzdsu.constants import WORKSHOP_URL
 
 
@@ -68,12 +68,21 @@ class Mod(NamedTuple):
             if path.is_dir():
                 return path
 
-        raise FileNotFoundError(ENOENT, ADDONS_GLOB, 'Addons not found.')
+        raise FileNotFoundError(ENOENT, ADDONS_GLOB, 'Addons dir not found.')
+
+    @property
+    def keys(self) -> Path:
+        """Returns the path to the keys directory."""
+        for path in self.path.glob(KEYS_DIR_GLOB):
+            if path.is_dir():
+                return path
+
+        raise FileNotFoundError(ENOENT, KEYS_DIR_GLOB, 'Keys dir not found.')
 
     @property
     def pbos(self) -> Iterator[Path]:
         """Yields paths to .pbo files."""
-        return self.addons.glob(PBO_GLOB)
+        return self.addons.glob('*.pbo')
 
     @property
     def url(self) -> str:
@@ -102,6 +111,7 @@ def fix_paths(mod: Mod) -> None:
         return
 
     link_to_lowercase(mod.addons)
+    link_to_lowercase(mod.keys)
 
     for pbo in mod.pbos:
         link_to_lowercase(pbo)

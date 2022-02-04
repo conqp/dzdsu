@@ -12,6 +12,7 @@ __all__ = [
     'DAYZ_SERVER_APP_ID',
     'ITALIC',
     'JSON_FILE',
+    'KEYS_DIR_GLOB',
     'KEYS_GLOB',
     'LINK',
     'MODS_BASE_DIR',
@@ -22,11 +23,12 @@ __all__ = [
 ]
 
 
-ADDONS_GLOB = '[Aa][Dd][Dd][Oo][Nn][Ss]'
+ADDONS_GLOB = '[Aa]ddons'
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
-KEYS_GLOB = f'{DAYZ_APP_ID}/*/[Kk]eys/*.bikey'
+KEYS_DIR_GLOB = '[Kk]eys'
+KEYS_GLOB = f'{DAYZ_APP_ID}/*/{KEYS_DIR_GLOB}/*.bikey'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 PBO_GLOB = '*.pbo'
 STEAMCMD = 'steamcmd'
