@@ -87,7 +87,12 @@ def link_to_lowercase(path: Path) -> None:
     if (lower := path.name.lower()) == path.name:
         return
 
-    path.parent.joinpath(lower).symlink_to(path.name)
+    symlink = path.parent / lower
+
+    if symlink.exists():
+        return
+
+    symlink.symlink_to(path.name)
 
 
 def fix_paths(mod: Mod) -> None:
