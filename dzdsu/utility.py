@@ -6,7 +6,7 @@ from pathlib import Path
 
 from dzdsu.constants import JSON_FILE
 from dzdsu.keys import install_keys
-from dzdsu.mods import print_mods
+from dzdsu.mods import fix_paths, print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
 
@@ -28,6 +28,9 @@ def get_args(description: str = __doc__) -> Namespace:
     parser.add_argument(
         '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
         help='servers JSON file path'
+    )
+    parser.add_argument(
+        '-F', '--fix-paths', action='store_true', help='fix mod file paths'
     )
     parser.add_argument(
         '-K', '--install-keys', action='store_true', help='install mod keys'
@@ -54,6 +57,13 @@ def get_args(description: str = __doc__) -> Namespace:
     return parser.parse_args()
 
 
+def fix_mod_paths(server: Server) -> None:
+    """Fix paths of the server mods."""
+
+    for mod in server.mods:
+        fix_paths(mod)
+
+
 def update(server: Server, args: Namespace) -> None:
     """Perform server and mod updates."""
 
@@ -66,6 +76,8 @@ def update(server: Server, args: Namespace) -> None:
     if args.update_mods:
         updater.update_mods(server)
         print()
+
+    fix_mod_paths(server)
 
 
 def list_mods(server: Server) -> None:
@@ -97,6 +109,8 @@ def main() -> int:
 
     if args.update:
         update(server, args)
+    elif args.fix_paths:
+        fix_mod_paths(server)
 
     if args.list_mods:
         list_mods(server)

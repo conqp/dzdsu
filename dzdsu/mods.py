@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from errno import ENOENT
+from os import name
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
@@ -15,7 +16,7 @@ from dzdsu.constants import PBO_GLOB
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'mods_str', 'print_mods']
+__all__ = ['Mod', 'fix_paths', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -78,6 +79,27 @@ class Mod(NamedTuple):
     def url(self) -> str:
         """Returns the Steam Workshop URL."""
         return WORKSHOP_URL.format(self.id)
+
+
+def link_to_lowercase(path: Path) -> None:
+    """Creates symlinks with the path names in lower case."""
+
+    if (lower := path.name.lower()) == path.name:
+        return
+
+    path.parent.joinpath(lower).symlink_to(path.name)
+
+
+def fix_paths(mod: Mod) -> None:
+    """Fixes the paths for the given mod."""
+
+    if name != 'posix':
+        return
+
+    link_to_lowercase(mod.addons)
+
+    for pbo in mod.pbos:
+        link_to_lowercase(pbo)
 
 
 def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
