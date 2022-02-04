@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
-from subprocess import run
+from subprocess import Popen
 
 from dzdsu.constants import JSON_FILE
 from dzdsu.server import load_servers
@@ -46,4 +46,5 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
-    return run(server.command, check=False, cwd=server.base_dir).returncode
+    Popen(server.command, cwd=server.base_dir)
+    return 0
