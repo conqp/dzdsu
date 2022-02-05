@@ -1,12 +1,12 @@
 """Server utility."""
 
 from argparse import ArgumentParser, Namespace
+from itertools import chain
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
 from dzdsu.constants import JSON_FILE
-from dzdsu.keys import install_keys
-from dzdsu.mods import fix_paths, print_mods
+from dzdsu.mods import print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
 
@@ -57,11 +57,24 @@ def get_args(description: str = __doc__) -> Namespace:
     return parser.parse_args()
 
 
+def install_keys(server: Server) -> None:
+    """Installs the keys for all mods of the server."""
+
+    for mod in chain(server.mods, server.server_mods):
+        for key in mod.bikeys:
+            if (installed := server.base_dir / 'keys' / key.name).exists():
+                LOGGER.info('Key "%s" already installed.', key.name)
+                continue
+
+            with key.open('rb') as src, installed.open('wb') as dst:
+                dst.write(src.read())
+
+
 def fix_mod_paths(server: Server) -> None:
     """Fix paths of the server mods."""
 
     for mod in server.mods:
-        fix_paths(mod)
+        mod.fix_paths()
 
 
 def update(server: Server, args: Namespace) -> None:
@@ -76,8 +89,6 @@ def update(server: Server, args: Namespace) -> None:
     if args.update_mods:
         updater.update_mods(server)
         print()
-
-    fix_mod_paths(server)
 
 
 def list_mods(server: Server) -> None:
@@ -104,13 +115,14 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
-    if args.install_keys:
-        install_keys(server.base_dir, overwrite=args.overwrite)
-
     if args.update:
         update(server, args)
-    elif args.fix_paths:
+
+    if args.fix_paths:
         fix_mod_paths(server)
+
+    if args.install_keys:
+        install_keys(server)
 
     if args.list_mods:
         list_mods(server)

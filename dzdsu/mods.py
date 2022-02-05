@@ -1,21 +1,18 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
-from os import name
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
-from dzdsu.constants import ADDONS_GLOB
 from dzdsu.constants import BOLD
 from dzdsu.constants import DAYZ_APP_ID
 from dzdsu.constants import ITALIC
-from dzdsu.constants import KEYS_DIR_GLOB
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_BASE_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'fix_paths', 'mods_str', 'print_mods']
+__all__ = ['Mod', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -66,14 +63,9 @@ class Mod(NamedTuple):
         return self.path / 'addons'
 
     @property
-    def addons_glob(self) -> Iterator[Path]:
-        """Returns available paths to the addons directory."""
-        return self.path.glob(ADDONS_GLOB)
-
-    @property
-    def keys_glob(self) -> Iterator[Path]:
-        """Returns available paths to the keys directory."""
-        return self.path.glob(KEYS_DIR_GLOB)
+    def keys(self) -> Path:
+        """Returns the path to the keys directory."""
+        return self.path / 'keys'
 
     @property
     def pbos(self) -> Iterator[Path]:
@@ -81,9 +73,25 @@ class Mod(NamedTuple):
         return self.addons.glob('*.pbo')
 
     @property
+    def bikeys(self) -> Iterator[Path]:
+        """Yields path to the *.bikey files."""
+        return self.keys.glob('*.bikey')
+
+    @property
     def url(self) -> str:
         """Returns the Steam Workshop URL."""
         return WORKSHOP_URL.format(self.id)
+
+    def fix_paths(self) -> None:
+        """Fixes paths to lower-case."""
+        if (addons := self.path / 'Addons').is_dir():
+            link_to_lowercase(addons)
+
+        if (keys := self.path / 'Keys').is_dir():
+            link_to_lowercase(keys)
+
+        for pbo in self.pbos:
+            link_to_lowercase(pbo)
 
 
 def link_to_lowercase(path: Path) -> None:
@@ -96,22 +104,6 @@ def link_to_lowercase(path: Path) -> None:
         return
 
     symlink.symlink_to(filename)
-
-
-def fix_paths(mod: Mod) -> None:
-    """Fixes the paths for the given mod."""
-
-    if name != 'posix':
-        return
-
-    for path in mod.addons_glob:
-        link_to_lowercase(path)
-
-    for path in mod.keys_glob:
-        link_to_lowercase(path)
-
-    for pbo in mod.pbos:
-        link_to_lowercase(pbo)
 
 
 def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
