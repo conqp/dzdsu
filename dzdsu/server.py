@@ -28,10 +28,10 @@ class Server(NamedTuple):
         """Creates a Server instance from a JSON-ish dict."""
         return cls(
             name,
-            json.get('app_id', DAYZ_SERVER_APP_ID),
-            Path(json['base_dir']),
+            json.get('appId', DAYZ_SERVER_APP_ID),
+            Path(json['basedir']),
             [Mod.from_value(mod) for mod in (json.get('mods') or [])],
-            [Mod.from_value(mod) for mod in (json.get('server_mods') or [])],
+            [Mod.from_value(mod) for mod in (json.get('serverMods') or [])],
             ServerParams.from_json(json.get('params') or {})
         )
 

@@ -28,11 +28,11 @@ The outermost object defines key-value pairs of server names and server objects.
     "description": "Configuration for a single server",
     "type": "object",
     "properties": {
-        "base_dir": {
+        "basedir": {
             "description": "The path to the server's base directory",
             "type": "string"
         },
-        "app_id": {
+        "appId": {
             "description": "The server's Steam app ID",
             "type": "integer"
         },
@@ -44,12 +44,12 @@ The outermost object defines key-value pairs of server names and server objects.
             "description": "Mods for the server",
             "type": "ModList"
         },
-        "server_mods": {
+        "serverMods": {
             "description": "Mods for the server only that are not propagated to clients",
             "type": "ModList"
         }
     },
-    "required": ["base_dir"]
+    "required": ["basedir"]
 }
 ```
 ### Server parameters
@@ -60,47 +60,43 @@ The outermost object defines key-value pairs of server names and server objects.
     "description": "Additional start parameters for a server",
     "type": "object",
     "properties": {
-        "config_file": {
+        "config": {
             "description": "The name of the config file to load",
             "type": "string"
         },
-        "do_logs": {
-            "description": "Add -dologs flag",
+        "doLogs": {
+            "description": "Add -doLogs flag",
             "type": "boolean"
         },
-        "admin_log": {
-            "description": "Add -adminlog flag",
+        "adminLog": {
+            "description": "Add -adminLog flag",
             "type": "boolean"
         },
-        "net_log": {
-            "description": "Add -netlog flag",
+        "netLog": {
+            "description": "Add -netLog flag",
             "type": "boolean"
         },
-        "src_allow_file_write": {
+        "srcAllowFileWrite": {
             "description": "Add -srcAllowFileWrite flag",
             "type": "boolean"
         },
-        "no_file_patching": {
+        "noFilePatching": {
             "description": "Add -noFilePatching flag",
             "type": "boolean"
         },
-        "freeze_check": {
-            "description": "Add -freezecheck flag",
+        "freezeCheck": {
+            "description": "Add -freezeCheck flag",
             "type": "boolean"
-        },
-        "instance_id": {
-            "description": "Override instanceId",
-            "type": "integer"
         },
         "port": {
             "description": "Override port",
             "type": "integer"
         },
-        "profiles_dir": {
+        "profiles": {
             "description": "Override profiles",
             "type": "string"
         },
-        "cpus": {
+        "cpuCount": {
             "description": "Override cpuCount",
             "type": "integer"
         }
