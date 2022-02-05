@@ -95,7 +95,7 @@ class Mod(NamedTuple):
 
 
 def link_to_lowercase(path: Path) -> None:
-    """Creates symlinks with the path names in lower case."""
+    """Creates a symlink with the path names in lower case."""
 
     if (filename := path.name) == (lower := filename.lower()):
         return
