@@ -34,7 +34,7 @@ class Updater:
         return steamcmd(
             '+force_install_dir', str(server.base_dir),
             '+login', self.steam_user_name,
-            *chain(*(update_mod_command(mod) for mod in server.mods))
+            *chain.from_iterable(map(update_mod_command, server.mods))
         )
 
     def update(self, server: Server) -> None:
