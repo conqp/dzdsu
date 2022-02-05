@@ -1,4 +1,4 @@
-"""DayZ server wrapper."""
+"""Server wrapper."""
 
 from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
