@@ -56,7 +56,7 @@ The outermost object defines key-value pairs of server names and server objects.
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "ServerPrams",
+    "title": "ServerParams",
     "description": "Additional start parameters for a server",
     "type": "object",
     "properties": {
