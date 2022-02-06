@@ -12,7 +12,7 @@ from dzdsu.constants import MODS_BASE_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'mods_str', 'print_mods']
+__all__ = ['Mod', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -99,12 +99,6 @@ def link_to_lowercase(path: Path) -> None:
         return
 
     symlink.symlink_to(filename)
-
-
-def mods_str(mods: Iterable[Mod], *, sep: str = ';') -> str:
-    """Returns a string representation of the given mods."""
-
-    return sep.join(str(mod.path) for mod in mods)
 
 
 def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
