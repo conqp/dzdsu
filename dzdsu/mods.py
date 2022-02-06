@@ -53,44 +53,39 @@ class Mod(NamedTuple):
         raise TypeError(f'Cannot create mod from: {value} ({type(value)})')
 
     @property
-    def path(self) -> Path:
-        """Returns the relative path to the local mod directory."""
-        return MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
-
-    @property
-    def addons(self) -> Path:
-        """Returns the path to the addons directory."""
-        return self.path / 'addons'
-
-    @property
-    def keys(self) -> Path:
-        """Returns the path to the keys directory."""
-        return self.path / 'keys'
-
-    @property
-    def pbos(self) -> Iterator[Path]:
-        """Yields paths to .pbo files."""
-        return self.addons.glob('*.pbo')
-
-    @property
-    def bikeys(self) -> Iterator[Path]:
-        """Yields path to the *.bikey files."""
-        return self.keys.glob('*.bikey')
-
-    @property
     def url(self) -> str:
         """Returns the Steam Workshop URL."""
         return WORKSHOP_URL.format(self.id)
 
-    def fix_paths(self) -> None:
+    def path(self, base_dir: Path) -> Path:
+        """Returns the relative path to the local mod directory."""
+        return base_dir / MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
+
+    def addons(self, base_dir: Path) -> Path:
+        """Returns the path to the addons directory."""
+        return self.path(base_dir) / 'addons'
+
+    def keys(self, base_dir: Path) -> Path:
+        """Returns the path to the keys directory."""
+        return self.path(base_dir) / 'keys'
+
+    def pbos(self, base_dir: Path) -> Iterator[Path]:
+        """Yields paths to .pbo files."""
+        return self.addons(base_dir).glob('*.pbo')
+
+    def bikeys(self, base_dir: Path) -> Iterator[Path]:
+        """Yields path to the *.bikey files."""
+        return self.keys(base_dir).glob('*.bikey')
+
+    def fix_paths(self, base_dir: Path) -> None:
         """Fixes paths to lower-case."""
-        if (addons := self.path / 'Addons').is_dir():
+        if (addons := self.path(base_dir) / 'Addons').is_dir():
             link_to_lowercase(addons)
 
-        if (keys := self.path / 'Keys').is_dir():
+        if (keys := self.path(base_dir) / 'Keys').is_dir():
             link_to_lowercase(keys)
 
-        for pbo in self.pbos:
+        for pbo in self.pbos(base_dir):
             link_to_lowercase(pbo)
 
 
