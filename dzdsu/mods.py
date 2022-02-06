@@ -12,7 +12,7 @@ from dzdsu.constants import MODS_BASE_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'print_mods']
+__all__ = ['Mod', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -57,9 +57,14 @@ class Mod(NamedTuple):
         """Returns the Steam Workshop URL."""
         return WORKSHOP_URL.format(self.id)
 
-    def path(self, base_dir: Path) -> Path:
+    @property
+    def relative_path(self) -> Path:
         """Returns the relative path to the local mod directory."""
-        return base_dir / MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
+        return MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
+
+    def path(self, base_dir: Path) -> Path:
+        """Returns the absolute path to the local mod directory."""
+        return base_dir / self.relative_path
 
     def addons(self, base_dir: Path) -> Path:
         """Returns the path to the addons directory."""
@@ -99,6 +104,12 @@ def link_to_lowercase(path: Path) -> None:
         return
 
     symlink.symlink_to(filename)
+
+
+def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
+    """Returns a string representation of the given mods."""
+
+    return sep.join(str(mod.relative_path) for mod in mods)
 
 
 def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:

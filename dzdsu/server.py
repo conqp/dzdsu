@@ -3,10 +3,10 @@
 from functools import cache
 from json import load
 from pathlib import Path
-from typing import Any, Iterable, Iterator, NamedTuple
+from typing import Any, Iterator, NamedTuple
 
 from dzdsu.constants import DAYZ_SERVER_APP_ID, SERVER_BINARY
-from dzdsu.mods import Mod
+from dzdsu.mods import Mod, mods_str
 from dzdsu.params import ServerParams
 
 
@@ -35,20 +35,14 @@ class Server(NamedTuple):
             ServerParams.from_json(json.get('params') or {})
         )
 
-    def mods_str(self, mods: Iterable[Mod], sep: str = ';') -> str:
-        """Returns a string representation of the given mods."""
-        return sep.join(str(mod.path(self.base_dir)) for mod in mods)
-
     def get_binary_args(self) -> Iterator[str]:
         """Yields arguments for the server binary."""
         yield from self.params.get_binary_args()
 
-        if mods := self.mods_str(mod for mod in self.mods if mod.enabled):
+        if mods := mods_str(mod for mod in self.mods if mod.enabled):
             yield f'-mod={mods}'
 
-        if mods := self.mods_str(
-                mod for mod in self.server_mods if mod.enabled
-        ):
+        if mods := mods_str(mod for mod in self.server_mods if mod.enabled):
             yield f'-serverMod={mods}'
 
     @property
