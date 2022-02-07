@@ -58,36 +58,34 @@ class Mod(NamedTuple):
         return WORKSHOP_URL.format(self.id)
 
     @property
-    def relative_path(self) -> Path:
+    def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
         return MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
 
-    def path(self, base_dir: Path) -> Path:
-        """Returns the absolute path to the local mod directory."""
-        return base_dir / self.relative_path
+    @property
+    def addons(self) -> Path:
+        """Returns the relative path to the addons directory."""
+        return self.path / 'addons'
 
-    def addons(self, base_dir: Path) -> Path:
-        """Returns the path to the addons directory."""
-        return self.path(base_dir) / 'addons'
-
-    def keys(self, base_dir: Path) -> Path:
-        """Returns the path to the keys directory."""
-        return self.path(base_dir) / 'keys'
+    @property
+    def keys(self) -> Path:
+        """Returns the relative path to the keys directory."""
+        return self.path / 'keys'
 
     def pbos(self, base_dir: Path) -> Iterator[Path]:
-        """Yields paths to .pbo files."""
-        return self.addons(base_dir).glob('*.pbo')
+        """Yields absolute paths to .pbo files."""
+        return (base_dir / self.addons).glob('*.pbo')
 
     def bikeys(self, base_dir: Path) -> Iterator[Path]:
-        """Yields path to the *.bikey files."""
-        return self.keys(base_dir).glob('*.bikey')
+        """Yields absolute path to the *.bikey files."""
+        return (base_dir / self.keys).glob('*.bikey')
 
     def fix_paths(self, base_dir: Path) -> None:
-        """Fixes paths to lower-case."""
-        if (addons := self.path(base_dir) / 'Addons').is_dir():
+        """Links paths to lower-case."""
+        if (addons := base_dir / self.path / 'Addons').is_dir():
             link_to_lowercase(addons)
 
-        if (keys := self.path(base_dir) / 'Keys').is_dir():
+        if (keys := base_dir / self.path / 'Keys').is_dir():
             link_to_lowercase(keys)
 
         for pbo in self.pbos(base_dir):
@@ -109,7 +107,7 @@ def link_to_lowercase(path: Path) -> None:
 def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
     """Returns a string representation of the given mods."""
 
-    return sep.join(str(mod.relative_path) for mod in mods)
+    return sep.join(str(mod.path) for mod in mods)
 
 
 def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
