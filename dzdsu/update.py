@@ -1,6 +1,5 @@
 """Game and mod updates."""
 
-from logging import getLogger
 from subprocess import CompletedProcess, run
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
@@ -8,9 +7,6 @@ from dzdsu.server import Server
 
 
 __all__ = ['Updater']
-
-
-LOGGER = getLogger('Updater')
 
 
 class Updater:
