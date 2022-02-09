@@ -118,7 +118,7 @@ class InstalledMod(NamedTuple):
     @property
     def mod(self) -> Mod:
         """Returns a Mod object."""
-        return Mod((metadata := self.metadata).publishedid, metadata.name)
+        return Mod(self.id, self.metadata.name)
 
     @property
     def path(self) -> Path:
