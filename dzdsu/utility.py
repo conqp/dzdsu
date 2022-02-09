@@ -71,9 +71,9 @@ def get_args(description: str = __doc__) -> Namespace:
 def clean_mods(server: Server) -> None:
     """Remove unused mods."""
 
-    for mod in server.unused_mods:
-        LOGGER.info('Removing unused mod: %s', mod)
-        mod.remove()
+    for installed_mod in server.unused_mods:
+        LOGGER.info('Removing unused mod: %s', installed_mod.mod)
+        installed_mod.remove()
 
 
 def install_keys(server: Server) -> None:
