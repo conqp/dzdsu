@@ -6,7 +6,7 @@ from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
 from dzdsu.constants import JSON_FILE
-from dzdsu.mods import print_mods
+from dzdsu.mods import ModMetadata, print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
 
@@ -31,6 +31,10 @@ def get_args(description: str = __doc__) -> Namespace:
     )
     parser.add_argument(
         '-F', '--fix-paths', action='store_true', help='fix mod file paths'
+    )
+    parser.add_argument(
+        '-I', '--installed-mods', action='store_true',
+        help='list installed mods'
     )
     parser.add_argument(
         '-K', '--install-keys', action='store_true', help='install mod keys'
@@ -127,5 +131,8 @@ def main() -> int:
 
     if args.list_mods:
         list_mods(server)
+
+    if args.installed_mods:
+        print_mods(ModMetadata.list(server.base_dir), header='Installed mods')
 
     return 0
