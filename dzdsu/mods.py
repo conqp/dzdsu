@@ -71,7 +71,7 @@ class ModMetadata(NamedTuple):
     protocol: int
     publishedid: int
     name: str
-    timestamp: datetime
+    timestamp: int
 
     @classmethod
     def from_dict(cls, dct: dict) -> ModMetadata:
@@ -80,7 +80,7 @@ class ModMetadata(NamedTuple):
             int(dct['protocol']),
             int(dct['publishedid']),
             dct['name'].strip('"'),
-            timestamp_to_datetime(int(dct['timestamp']))
+            int(dct['timestamp'])
         )
 
     @classmethod
@@ -99,6 +99,15 @@ class ModMetadata(NamedTuple):
         """Reads the mod metadata from the given file."""
         with filename.open('r', encoding='utf-8') as file:
             return cls.from_lines(file)
+
+    @property
+    def datetime(self) -> datetime:
+        """Returns the parsed datetime from the timestamp.
+        Beware that the timestamp might be broken.
+        """
+        return datetime.fromtimestamp(
+            self.timestamp / 10_000_000 + TIMESTAMP_OFFSET.timestamp() * 10
+        )
 
 
 class InstalledMod(NamedTuple):
@@ -198,13 +207,3 @@ def print_mods(
 
     for mod in mods:
         print(mod if mod.enabled else ITALIC.format(mod))
-
-
-def timestamp_to_datetime(timestamp: int) -> datetime:
-    """Magic conversion from strange DayZ
-    mod timestamps to datetime objects.
-    """
-
-    return datetime.fromtimestamp(
-        timestamp / 10_000_000 + TIMESTAMP_OFFSET.timestamp() * 10
-    )
