@@ -22,7 +22,7 @@ class Mod(NamedTuple):
 
     id: int
     name: Optional[str] = None
-    enabled: Optional[bool] = None
+    enabled: bool = True
 
     def __str__(self) -> str:
         return LINK.format(url=self.url, text=self.name or self.id)
@@ -116,9 +116,6 @@ class InstalledMod(NamedTuple):
     id: int
     base_dir: Path
 
-    def __str__(self) -> str:
-        return str(self.mod)
-
     @property
     def mod(self) -> Mod:
         """Returns a Mod object."""
@@ -193,11 +190,7 @@ def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
     return sep.join(str(mod.path) for mod in mods)
 
 
-def print_mods(
-        mods: Iterable[Mod | InstalledMod],
-        *,
-        header: str = 'Mods'
-) -> None:
+def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
     """Lists the respective mods."""
 
     if not mods:

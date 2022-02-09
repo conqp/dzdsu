@@ -146,6 +146,12 @@ def main() -> int:
         list_mods(server)
 
     if args.installed_mods:
-        print_mods(sorted(server.installed_mods), header='Installed mods')
+        print_mods(
+            sorted(map(
+                lambda installed_mod: installed_mod.mod,
+                server.installed_mods
+            )),
+            header='Installed mods'
+        )
 
     return 0
