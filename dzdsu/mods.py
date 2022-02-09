@@ -6,7 +6,6 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
-from dzdsu.constants import BOLD
 from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_DIR

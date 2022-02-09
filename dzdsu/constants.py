@@ -6,7 +6,6 @@ from pathlib import Path
 
 
 __all__ = [
-    'BOLD',
     'CONFIG_FILE',
     'DAYZ_APP_ID',
     'DAYZ_SERVER_APP_ID',
@@ -31,7 +30,6 @@ STEAMCMD = 'steamcmd'
 TIMESTAMP_OFFSET = datetime(311, 9, 19, 21, 9, 1, 300000)   # Some magic here.
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
-BOLD = '\033[1m{}\033[0m'
 ITALIC = '\033[3m{}\033[0m'
 LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\'
 
