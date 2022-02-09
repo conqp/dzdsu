@@ -99,15 +99,15 @@ def fix_mod_paths(server: Server) -> None:
 def update(server: Server, args: Namespace) -> None:
     """Perform server and mod updates."""
 
-    updater = Updater(args.update)
+    updater = Updater(server, args.update)
 
     if args.update_server:
-        updater.update_server(server)
-        print()
+        updater.update_server()
 
     if args.update_mods:
-        updater.update_mods(server)
-        print()
+        updater.update_mods()
+
+    updater.execute()
 
 
 def main() -> int:
