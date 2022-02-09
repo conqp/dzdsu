@@ -101,6 +101,14 @@ class ModMetadata(NamedTuple):
     name: str
     timestamp: datetime
 
+    def __str__(self) -> str:
+        return LINK.format(url=self.url, text=self.name)
+
+    @property
+    def url(self) -> str:
+        """Returns the Steam Workshop URL."""
+        return WORKSHOP_URL.format(self.publishedid)
+
     @classmethod
     def from_dict(cls, dct: dict) -> ModMetadata:
         """Creates mod metadata from the given dict."""
@@ -155,7 +163,10 @@ def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
     return sep.join(str(mod.path) for mod in mods)
 
 
-def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
+def print_mods(
+        mods: Iterable[Mod | ModMetadata], *,
+        header: str = 'Mods'
+) -> None:
     """Lists the respective mods."""
 
     if not mods:
