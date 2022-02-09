@@ -46,7 +46,7 @@ def get_args(description: str = __doc__) -> Namespace:
     )
     parser.add_argument(
         '-U', '--update', metavar='steam_user',
-        help='provide steam user to update server and/or mods'
+        help='update server and/or mods'
     )
     parser.add_argument(
         '-s', '--update-server', action='store_true', help='update server'
