@@ -13,6 +13,7 @@ __all__ = [
     'JSON_FILE',
     'LINK',
     'MODS_BASE_DIR',
+    'MODS_DIR',
     'SERVER_BINARY',
     'STEAMCMD',
     'WORKSHOP_URL'
@@ -23,6 +24,7 @@ CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
+MODS_DIR = MODS_BASE_DIR / str(DAYZ_APP_ID)
 STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 

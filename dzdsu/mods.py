@@ -3,13 +3,13 @@
 from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
+from shutil import rmtree
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
 from dzdsu.constants import BOLD
-from dzdsu.constants import DAYZ_APP_ID
 from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
-from dzdsu.constants import MODS_BASE_DIR
+from dzdsu.constants import MODS_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
@@ -21,7 +21,7 @@ class Mod(NamedTuple):
 
     id: int
     name: Optional[str] = None
-    enabled: bool = True
+    enabled: Optional[bool] = None
 
     def __str__(self) -> str:
         return LINK.format(url=self.url, text=self.name or self.id)
@@ -61,7 +61,7 @@ class Mod(NamedTuple):
     @property
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
-        return MODS_BASE_DIR / str(DAYZ_APP_ID) / str(self.id)
+        return MODS_DIR / str(self.id)
 
     @property
     def addons(self) -> Path:
@@ -92,6 +92,10 @@ class Mod(NamedTuple):
         for pbo in self.pbos(base_dir):
             link_to_lowercase(pbo)
 
+    def remove(self, base_dir: Path) -> None:
+        """Removes this mod."""
+        rmtree(base_dir / self.path)
+
 
 class ModMetadata(NamedTuple):
     """Metadata of a mod."""
@@ -100,14 +104,6 @@ class ModMetadata(NamedTuple):
     publishedid: int
     name: str
     timestamp: datetime
-
-    def __str__(self) -> str:
-        return LINK.format(url=self.url, text=self.name)
-
-    @property
-    def url(self) -> str:
-        """Returns the Steam Workshop URL."""
-        return WORKSHOP_URL.format(self.publishedid)
 
     @classmethod
     def from_dict(cls, dct: dict) -> ModMetadata:
@@ -136,14 +132,6 @@ class ModMetadata(NamedTuple):
         with filename.open('r', encoding='utf-8') as file:
             return cls.from_lines(file)
 
-    @classmethod
-    def list(cls, base_dir: Path) -> Iterator[ModMetadata]:
-        """Yields installed mod metadata."""
-        mods_dir = base_dir / MODS_BASE_DIR / str(DAYZ_APP_ID)
-
-        for filename in mods_dir.glob('*/meta.cpp'):
-            yield cls.from_file(filename)
-
 
 def link_to_lowercase(path: Path) -> None:
     """Creates a symlink with the path names in lower case."""
@@ -163,10 +151,7 @@ def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
     return sep.join(str(mod.path) for mod in mods)
 
 
-def print_mods(
-        mods: Iterable[Mod | ModMetadata], *,
-        header: str = 'Mods'
-) -> None:
+def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
     """Lists the respective mods."""
 
     if not mods:

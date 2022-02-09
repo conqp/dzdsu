@@ -6,7 +6,7 @@ from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
 from dzdsu.constants import JSON_FILE
-from dzdsu.mods import ModMetadata, print_mods
+from dzdsu.mods import print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
 
@@ -28,6 +28,9 @@ def get_args(description: str = __doc__) -> Namespace:
     parser.add_argument(
         '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
         help='servers JSON file path'
+    )
+    parser.add_argument(
+        '-C', '--clean-mods', action='store_true', help='remove unused mods'
     )
     parser.add_argument(
         '-F', '--fix-paths', action='store_true', help='fix mod file paths'
@@ -60,6 +63,14 @@ def get_args(description: str = __doc__) -> Namespace:
         '-v', '--verbose', action='store_true', help='verbose logging output'
     )
     return parser.parse_args()
+
+
+def clean_mods(server: Server) -> None:
+    """Remove unused mods."""
+
+    for mod in server.unused_mods:
+        LOGGER.info('Removing unused mod: %s', mod)
+        mod.remove(server.base_dir)
 
 
 def install_keys(server: Server) -> None:
@@ -120,6 +131,9 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
+    if args.clean_mods:
+        clean_mods(server)
+
     if args.update:
         update(server, args)
 
@@ -133,6 +147,6 @@ def main() -> int:
         list_mods(server)
 
     if args.installed_mods:
-        print_mods(ModMetadata.list(server.base_dir), header='Installed mods')
+        print_mods(sorted(server.installed_mods), header='Installed mods')
 
     return 0
