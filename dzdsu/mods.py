@@ -190,13 +190,8 @@ def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
     return sep.join(str(mod.path) for mod in mods)
 
 
-def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
+def print_mods(mods: Iterable[Mod]) -> None:
     """Lists the respective mods."""
-
-    if not mods:
-        return
-
-    print(BOLD.format(header))
 
     for mod in mods:
         print(mod if mod.enabled else ITALIC.format(mod))

@@ -45,6 +45,10 @@ def get_args(description: str = __doc__) -> Namespace:
         '-M', '--list-mods', action='store_true', help="list the server's mods"
     )
     parser.add_argument(
+        '-S', '--list-server-mods', action='store_true',
+        help="list the server's server mods"
+    )
+    parser.add_argument(
         '-U', '--update', metavar='steam_user',
         help='update server and/or mods'
     )
@@ -106,17 +110,6 @@ def update(server: Server, args: Namespace) -> None:
         print()
 
 
-def list_mods(server: Server) -> None:
-    """List mods."""
-
-    print_mods(server.mods, header='Mods')
-
-    if server.mods and server.server_mods:
-        print()
-
-    print_mods(server.server_mods, header='Server mods')
-
-
 def main() -> int:
     """Update mods."""
 
@@ -143,15 +136,15 @@ def main() -> int:
         install_keys(server)
 
     if args.list_mods:
-        list_mods(server)
+        print_mods(server.mods)
+
+    if args.list_server_mods:
+        print_mods(server.server_mods)
 
     if args.installed_mods:
-        print_mods(
-            sorted(map(
-                lambda installed_mod: installed_mod.mod,
-                server.installed_mods
-            )),
-            header='Installed mods'
-        )
+        print_mods(sorted(map(
+            lambda installed_mod: installed_mod.mod,
+            server.installed_mods
+        )))
 
     return 0
