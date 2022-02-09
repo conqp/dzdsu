@@ -1,7 +1,6 @@
 """Server utility."""
 
 from argparse import ArgumentParser, Namespace
-from itertools import chain
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
@@ -70,14 +69,14 @@ def clean_mods(server: Server) -> None:
 
     for mod in server.unused_mods:
         LOGGER.info('Removing unused mod: %s', mod)
-        mod.remove(server.base_dir)
+        mod.remove()
 
 
 def install_keys(server: Server) -> None:
     """Installs the keys for all mods of the server."""
 
-    for mod in chain(server.mods, server.server_mods):
-        for key in mod.bikeys(server.base_dir):
+    for installed_mod in server.installed_mods:
+        for key in installed_mod.bikeys:
             if (installed := server.base_dir / 'keys' / key.name).exists():
                 LOGGER.info('Key "%s" already installed.', key.name)
                 continue
@@ -89,8 +88,8 @@ def install_keys(server: Server) -> None:
 def fix_mod_paths(server: Server) -> None:
     """Fix paths of the server mods."""
 
-    for mod in server.mods:
-        mod.fix_paths(server.base_dir)
+    for installed_mod in server.installed_mods:
+        installed_mod.fix_paths()
 
 
 def update(server: Server, args: Namespace) -> None:

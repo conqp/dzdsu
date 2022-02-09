@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
 from dzdsu.constants import DAYZ_SERVER_APP_ID, MODS_DIR, SERVER_BINARY
-from dzdsu.mods import Mod, ModMetadata, mods_str
+from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 
 
@@ -63,10 +63,10 @@ class Server(NamedTuple):
             yield ModMetadata.from_file(filename)
 
     @property
-    def installed_mods(self) -> Iterator[Mod]:
+    def installed_mods(self) -> Iterator[InstalledMod]:
         """Yields installed mods."""
         for meta in self.installed_mods_metadata:
-            yield Mod(meta.publishedid, meta.name)
+            yield InstalledMod(meta.publishedid, self.base_dir)
 
     @property
     def used_mods(self) -> Iterator[Mod]:
@@ -74,13 +74,13 @@ class Server(NamedTuple):
         return chain(self.mods, self.server_mods)
 
     @property
-    def unused_mods(self) -> Iterator[Mod]:
+    def unused_mods(self) -> Iterator[InstalledMod]:
         """Yields unused mods."""
         used_ids = {mod.id for mod in self.used_mods}
 
         for meta in self.installed_mods_metadata:
             if meta.publishedid not in used_ids:
-                yield Mod(meta.publishedid, meta.name)
+                yield InstalledMod(meta.publishedid, self.base_dir)
 
 
 def load_servers(file: Path) -> dict[str, Server]:

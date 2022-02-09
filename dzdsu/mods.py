@@ -13,7 +13,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'ModMetadata', 'mods_str', 'print_mods']
+__all__ = ['Mod', 'ModMetadata', 'InstalledMod', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -54,47 +54,14 @@ class Mod(NamedTuple):
         raise TypeError(f'Cannot create mod from: {value} ({type(value)})')
 
     @property
-    def url(self) -> str:
-        """Returns the Steam Workshop URL."""
-        return WORKSHOP_URL.format(self.id)
-
-    @property
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
         return MODS_DIR / str(self.id)
 
     @property
-    def addons(self) -> Path:
-        """Returns the relative path to the addons directory."""
-        return self.path / 'addons'
-
-    @property
-    def keys(self) -> Path:
-        """Returns the relative path to the keys directory."""
-        return self.path / 'keys'
-
-    def pbos(self, base_dir: Path) -> Iterator[Path]:
-        """Yields absolute paths to .pbo files."""
-        return (base_dir / self.addons).glob('*.pbo')
-
-    def bikeys(self, base_dir: Path) -> Iterator[Path]:
-        """Yields absolute path to the *.bikey files."""
-        return (base_dir / self.keys).glob('*.bikey')
-
-    def fix_paths(self, base_dir: Path) -> None:
-        """Links paths to lower-case."""
-        if (addons := base_dir / self.path / 'Addons').is_dir():
-            link_to_lowercase(addons)
-
-        if (keys := base_dir / self.path / 'Keys').is_dir():
-            link_to_lowercase(keys)
-
-        for pbo in self.pbos(base_dir):
-            link_to_lowercase(pbo)
-
-    def remove(self, base_dir: Path) -> None:
-        """Removes this mod."""
-        rmtree(base_dir / self.path)
+    def url(self) -> str:
+        """Returns the Steam Workshop URL."""
+        return WORKSHOP_URL.format(self.id)
 
 
 class ModMetadata(NamedTuple):
@@ -133,6 +100,71 @@ class ModMetadata(NamedTuple):
             return cls.from_lines(file)
 
 
+class InstalledMod(NamedTuple):
+    """Represents an installed mod."""
+
+    id: int
+    base_dir: Path
+
+    def __str__(self) -> str:
+        return str(self.mod)
+
+    @property
+    def mod(self) -> Mod:
+        """Returns a Mod object."""
+        return Mod((metadata := self.metadata).publishedid, metadata.name)
+
+    @property
+    def path(self) -> Path:
+        """Returns the relative path to the local mod directory."""
+        return self.base_dir / self.mod.path
+
+    @property
+    def addons(self) -> Path:
+        """Returns the path to the addons directory."""
+        return self.path / 'addons'
+
+    @property
+    def keys(self) -> Path:
+        """Returns the path to the keys directory."""
+        return self.path / 'keys'
+
+    @property
+    def metadata_file(self) -> Path:
+        """Returns the path to the metadata file."""
+        return self.path / 'meta.cpp'
+
+    @property
+    def metadata(self) -> ModMetadata:
+        """Returns the mod metadata."""
+        return ModMetadata.from_file(self.metadata_file)
+
+    @property
+    def pbos(self) -> Iterator[Path]:
+        """Yields paths to the .pbo files."""
+        return self.addons.glob('*.pbo')
+
+    @property
+    def bikeys(self) -> Iterator[Path]:
+        """Yields paths to the *.bikey files."""
+        return self.keys.glob('*.bikey')
+
+    def fix_paths(self) -> None:
+        """Links paths to lower-case."""
+        if (addons := self.path / 'Addons').is_dir():
+            link_to_lowercase(addons)
+
+        if (keys := self.path / 'Keys').is_dir():
+            link_to_lowercase(keys)
+
+        for pbo in self.pbos:
+            link_to_lowercase(pbo)
+
+    def remove(self) -> None:
+        """Removes this mod."""
+        rmtree(self.path)
+
+
 def link_to_lowercase(path: Path) -> None:
     """Creates a symlink with the path names in lower case."""
 
@@ -151,7 +183,11 @@ def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
     return sep.join(str(mod.path) for mod in mods)
 
 
-def print_mods(mods: Iterable[Mod], *, header: str = 'Mods') -> None:
+def print_mods(
+        mods: Iterable[Mod | InstalledMod],
+        *,
+        header: str = 'Mods'
+) -> None:
     """Lists the respective mods."""
 
     if not mods:
