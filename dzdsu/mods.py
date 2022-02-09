@@ -1,6 +1,7 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
 
@@ -12,7 +13,7 @@ from dzdsu.constants import MODS_BASE_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'mods_str', 'print_mods']
+__all__ = ['Mod', 'ModMetadata', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -90,6 +91,50 @@ class Mod(NamedTuple):
 
         for pbo in self.pbos(base_dir):
             link_to_lowercase(pbo)
+
+
+class ModMetadata(NamedTuple):
+    """Metadata of a mod."""
+
+    protocol: int
+    publishedid: int
+    name: str
+    timestamp: datetime
+
+    @classmethod
+    def from_dict(cls, dct: dict) -> ModMetadata:
+        """Creates mod metadata from the given dict."""
+        return cls(
+            int(dct['protocol']),
+            int(dct['publishedid']),
+            dct['name'].strip('"'),
+            datetime.fromtimestamp(int(dct['timestamp']))
+        )
+
+    @classmethod
+    def from_lines(cls, lines: Iterable[str]) -> ModMetadata:
+        """Creates mod metadata from the given lines."""
+        return cls.from_dict({
+            key: value.rstrip(';') for key, value in (
+                line.split(' = ') for line in (
+                    line.strip() for line in lines
+                ) if line
+            )
+        })
+
+    @classmethod
+    def from_file(cls, filename: Path) -> ModMetadata:
+        """Reads the mod metadata from the given file."""
+        with filename.open('r', encoding='utf-8') as file:
+            return cls.from_lines(file)
+
+    @classmethod
+    def list(cls, base_dir: Path) -> Iterator[ModMetadata]:
+        """Yields installed mod metadata."""
+        mods_dir = base_dir / MODS_BASE_DIR / str(DAYZ_APP_ID)
+
+        for filename in mods_dir.glob('*/meta.cpp'):
+            yield cls.from_file(filename)
 
 
 def link_to_lowercase(path: Path) -> None:
