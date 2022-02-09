@@ -10,6 +10,7 @@ from dzdsu.constants import BOLD
 from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_DIR
+from dzdsu.constants import TIMESTAMP_OFFSET
 from dzdsu.constants import WORKSHOP_URL
 
 
@@ -79,7 +80,7 @@ class ModMetadata(NamedTuple):
             int(dct['protocol']),
             int(dct['publishedid']),
             dct['name'].strip('"'),
-            datetime.fromtimestamp(int(dct['timestamp']))
+            timestamp_to_datetime(int(dct['timestamp']))
         )
 
     @classmethod
@@ -197,3 +198,13 @@ def print_mods(
 
     for mod in mods:
         print(mod if mod.enabled else ITALIC.format(mod))
+
+
+def timestamp_to_datetime(timestamp: int) -> datetime:
+    """Magic conversion from strange DayZ
+    mod timestamps to datetime objects.
+    """
+
+    return datetime.fromtimestamp(
+        timestamp / 10_000_000 + TIMESTAMP_OFFSET.timestamp() * 10
+    )
