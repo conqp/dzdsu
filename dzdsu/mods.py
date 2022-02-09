@@ -124,7 +124,7 @@ class InstalledMod(NamedTuple):
     @property
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
-        return self.base_dir / self.mod.path
+        return self.base_dir / MODS_DIR / str(self.id)
 
     @property
     def addons(self) -> Path:
