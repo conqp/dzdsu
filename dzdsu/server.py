@@ -1,5 +1,6 @@
 """Server representation."""
 
+from configparser import SectionProxy
 from functools import cache
 from itertools import chain
 from json import load
@@ -12,7 +13,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_BINARY
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
-from dzdsu.parsers import parse_battleye_cfg
+from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
 
 
 __all__ = ['Server', 'load_servers', 'load_servers_json']
@@ -80,6 +81,17 @@ class Server(NamedTuple):
         """Yields metadata of installed mods."""
         for filename in self.mods_dir.glob('*/meta.cpp'):
             yield ModMetadata.from_file(filename)
+
+    @property
+    def config_file(self) -> Path:
+        """Returns the config file path."""
+        return self.base_dir / 'serverDZ.cfg'
+
+    @property
+    def config(self) -> SectionProxy:
+        """Returns the configuration settings."""
+        with self.config_file.open('r', encoding='utf-8') as file:
+            return parse_server_cfg(file)
 
     @property
     def installed_mods(self) -> Iterator[InstalledMod]:
