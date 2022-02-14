@@ -1,6 +1,7 @@
 """Config file parsers."""
 
 from configparser import ConfigParser, SectionProxy
+from os import linesep
 from re import fullmatch
 from tempfile import NamedTemporaryFile
 from typing import Iterable, Iterator
@@ -57,7 +58,10 @@ def parse_server_cfg(
     config = ConfigParser()
 
     with NamedTemporaryFile('w+b') as file:
-        file.writelines(server_cfg_to_ini(lines, section))
+        for line in server_cfg_to_ini(lines, section):
+            file.write(line)
+            file.write(linesep)
+
         file.flush()
         config.read(file.name)
 
