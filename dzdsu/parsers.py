@@ -40,10 +40,11 @@ def server_cfg_to_ini(lines: Iterable[str]) -> Iterator[tuple[str, str]]:
         if not (line := line.strip()):
             continue
 
-        if not (match := fullmatch(r'^(\w+)\s*=\s*(\w+);.*', line)):
+        if not (match := fullmatch(r'^(\w+)\s*=\s*(.+);.*', line)):
             continue
 
-        yield match.groups()
+        key, value = match.groups()
+        yield key, value.strip('"')
 
 
 def parse_server_cfg(
