@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 __all__ = [
+    'BATTLEYE_GLOB',
     'CONFIG_FILE',
     'DAYZ_APP_ID',
     'DAYZ_SERVER_APP_ID',
@@ -21,6 +22,7 @@ __all__ = [
 ]
 
 
+BATTLEYE_GLOB = 'battleye/beserver_x64*.cfg'
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350

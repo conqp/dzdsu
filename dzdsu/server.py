@@ -6,9 +6,13 @@ from json import load
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
-from dzdsu.constants import DAYZ_SERVER_APP_ID, MODS_DIR, SERVER_BINARY
+from dzdsu.constants import BATTLEYE_GLOB
+from dzdsu.constants import DAYZ_SERVER_APP_ID
+from dzdsu.constants import MODS_DIR
+from dzdsu.constants import SERVER_BINARY
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
+from dzdsu.parsers import parse_battleye_cfg
 
 
 __all__ = ['Server', 'load_servers', 'load_servers_json']
@@ -55,6 +59,21 @@ class Server(NamedTuple):
     def mods_dir(self) -> Path:
         """Returns the server's mods directory."""
         return self.base_dir / MODS_DIR
+
+    @property
+    def battleye_cfg_file(self) -> Path:
+        """Returns the BattlEye RCon config file."""
+        for path in self.base_dir.glob(BATTLEYE_GLOB):
+            if path.is_file():
+                return path
+
+        raise FileNotFoundError(BATTLEYE_GLOB)
+
+    @property
+    def battleye_cfg(self) -> dict[str, str | int | bool]:
+        """Returns the BattlEye RCon configuration."""
+        with self.battleye_cfg_file.open('r', encoding='utf-8') as file:
+            return dict(parse_battleye_cfg(file))
 
     @property
     def installed_mods_metadata(self) -> Iterator[ModMetadata]:
