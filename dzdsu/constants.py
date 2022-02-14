@@ -15,7 +15,7 @@ __all__ = [
     'LINK',
     'MODS_BASE_DIR',
     'MODS_DIR',
-    'SERVER_BINARY',
+    'SERVER_EXECUTABLE',
     'STEAMCMD',
     'TIMESTAMP_OFFSET',
     'WORKSHOP_URL'
@@ -37,9 +37,9 @@ LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\'
 
 if name == 'nt':
     JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
-    SERVER_BINARY = 'DayZServer_x64.exe'
+    SERVER_EXECUTABLE = 'DayZServer_x64.exe'
 elif name == 'posix':
     JSON_FILE = Path('/etc/dzservers.json')
-    SERVER_BINARY = 'DayZServer'
+    SERVER_EXECUTABLE = 'DayZServer'
 else:
     raise OSError('Unsupported operating system.')

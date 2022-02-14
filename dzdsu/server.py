@@ -10,7 +10,7 @@ from typing import Any, Iterator, NamedTuple
 from dzdsu.constants import BATTLEYE_GLOB
 from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import MODS_DIR
-from dzdsu.constants import SERVER_BINARY
+from dzdsu.constants import SERVER_EXECUTABLE
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
@@ -54,7 +54,7 @@ class Server(NamedTuple):
     @property
     def executable(self) -> Path:
         """Returns the absolute path to the server's executable file."""
-        return self.base_dir / SERVER_BINARY
+        return self.base_dir / SERVER_EXECUTABLE
 
     @property
     def command(self) -> list[str]:
