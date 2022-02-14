@@ -52,9 +52,14 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
+    def executable(self) -> Path:
+        """Returns the absolute path to the server's executable file."""
+        return self.base_dir / SERVER_BINARY
+
+    @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        return [str(self.base_dir / SERVER_BINARY), *self.get_binary_args()]
+        return [str(self.executable), *self.get_binary_args()]
 
     @property
     def mods_dir(self) -> Path:
