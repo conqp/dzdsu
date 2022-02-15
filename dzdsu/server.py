@@ -16,7 +16,7 @@ from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
 
 
-__all__ = ['Server', 'load_servers', 'load_servers_json']
+__all__ = ['Server', 'load_servers']
 
 
 class Server(NamedTuple):
@@ -120,6 +120,14 @@ class Server(NamedTuple):
                 yield InstalledMod(meta.publishedid, self.base_dir)
 
 
+@cache
+def load_servers_json(file: Path) -> dict[str, Any]:
+    """Loads servers from a JSON file."""
+
+    with file.open('r') as json:
+        return load(json)
+
+
 def load_servers(file: Path) -> dict[str, Server]:
     """Loads servers."""
 
@@ -127,11 +135,3 @@ def load_servers(file: Path) -> dict[str, Server]:
         name: Server.from_json(name, json)
         for name, json in load_servers_json(file).items()
     }
-
-
-@cache
-def load_servers_json(file: Path) -> dict[str, Any]:
-    """Loads servers from a JSON file."""
-
-    with file.open('r') as json:
-        return load(json)
