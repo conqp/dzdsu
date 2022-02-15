@@ -4,8 +4,9 @@ from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 from subprocess import Popen
+from time import sleep
 
-from dzdsu.constants import JSON_FILE
+from dzdsu.constants import JSON_FILE, XVFB
 from dzdsu.server import load_servers
 
 
@@ -39,6 +40,7 @@ def main() -> int:
     args = get_args()
     basicConfig(level=INFO if args.verbose else WARNING)
     servers = load_servers(args.servers_file)
+    env = None
 
     try:
         server = servers[args.server]
@@ -46,5 +48,10 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
-    Popen(server.command, cwd=server.base_dir)
+    if server.wine:
+        Popen(XVFB, cwd=server.base_dir)
+        env = {'DISPLAY': ':0'}
+        sleep(3)    # Give Xvfb some time to start up.
+
+    Popen(server.command, cwd=server.base_dir, env=env)
     return 0

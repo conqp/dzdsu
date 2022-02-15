@@ -19,7 +19,8 @@ __all__ = [
     'STEAMCMD',
     'STEAMCMD_WINE',
     'WINE',
-    'WORKSHOP_URL'
+    'WORKSHOP_URL',
+    'XVFB'
 ]
 
 
@@ -34,6 +35,7 @@ STEAMCMD = 'steamcmd'
 STEAMCMD_WINE = '.steamcmd/steamcmd.exe'
 WINE = '/usr/bin/wine'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
+XVFB = ('/usr/bin/Xvfb', ':0', '-screen', '0', '1024x768x16')
 
 ITALIC = '\033[3m{}\033[0m'
 LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\'
