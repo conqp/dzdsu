@@ -1,7 +1,6 @@
 """Server representation."""
 
 from configparser import SectionProxy
-from functools import cache
 from itertools import chain
 from json import load
 from pathlib import Path
@@ -120,7 +119,6 @@ class Server(NamedTuple):
                 yield InstalledMod(meta.publishedid, self.base_dir)
 
 
-@cache
 def load_servers_json(file: Path) -> dict[str, Any]:
     """Loads servers from a JSON file."""
 
