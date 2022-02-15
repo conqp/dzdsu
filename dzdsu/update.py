@@ -1,5 +1,6 @@
 """Game and mod updates."""
 
+from __future__ import annotations
 from subprocess import CompletedProcess, run
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
@@ -20,17 +21,20 @@ class Updater:
             '+login', steam_user_name
         ]
 
-    def update_server(self) -> None:
+    def update_server(self) -> Updater:
         """Updates the server."""
         self.commands += ['+app_update', str(self.server.app_id), 'validate']
+        return self
 
-    def update_mods(self) -> None:
+    def update_mods(self) -> Updater:
         """Updates the server's mods."""
         for mod in self.server.used_mods:
             self.commands += [
                 '+workshop_download_item', str(DAYZ_APP_ID), str(mod.id),
                 'validate'
             ]
+
+        return self
 
     def execute(self) -> CompletedProcess:
         """Executes the steamcmd command."""
