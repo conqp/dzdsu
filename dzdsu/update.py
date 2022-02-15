@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from subprocess import CompletedProcess, run
+from typing import Iterable
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
 from dzdsu.server import Server
@@ -13,17 +14,30 @@ __all__ = ['Updater']
 class Updater:
     """SteamCMD wrapper to update server and mods."""
 
-    def __init__(self, server: Server, steam_user_name: str):
+    def __init__(
+            self, server: Server, steam_user_name: str, *,
+            steamcmd: str | Iterable[str] = STEAMCMD
+    ):
         """Sets server name and initial command."""
         self.server = server
+        self.steamcmd = [steamcmd] if isinstance(steamcmd, str) else steamcmd
         self.commands = [
             '+force_install_dir', str(server.base_dir),
             '+login', steam_user_name
         ]
 
+    def __str__(self):
+        """Returns the command as a string."""
+        return ' '.join(self.command)
+
     def __call__(self) -> CompletedProcess:
         """Executes the steamcmd command."""
-        return run([STEAMCMD, *self.commands, '+quit'], check=True)
+        return run(self.command, check=True)
+
+    @property
+    def command(self) -> list[str]:
+        """Returns the command."""
+        return [*self.steamcmd, *self.commands, '+quit']
 
     def update_server(self) -> Updater:
         """Updates the server."""
