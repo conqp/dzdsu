@@ -107,7 +107,7 @@ def update(server: Server, args: Namespace) -> None:
     if args.update_mods:
         updater.update_mods()
 
-    updater.execute()
+    updater()
 
 
 def main() -> int:

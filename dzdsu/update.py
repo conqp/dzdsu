@@ -21,6 +21,10 @@ class Updater:
             '+login', steam_user_name
         ]
 
+    def __call__(self) -> CompletedProcess:
+        """Executes the steamcmd command."""
+        return run([STEAMCMD, *self.commands, '+quit'], check=True)
+
     def update_server(self) -> Updater:
         """Updates the server."""
         self.commands += ['+app_update', str(self.server.app_id), 'validate']
@@ -35,7 +39,3 @@ class Updater:
             ]
 
         return self
-
-    def execute(self) -> CompletedProcess:
-        """Executes the steamcmd command."""
-        return run([STEAMCMD, *self.commands, '+quit'], check=True)
