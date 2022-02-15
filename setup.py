@@ -9,7 +9,7 @@ setup(
     setup_requires=['setuptools_scm'],
     author='Richard Neumann',
     author_email='mail@richard-neumann.de',
-    python_requires='>=3.9',
+    python_requires='>=3.10',
     packages=['dzdsu'],
     entry_points={
         'console_scripts': [
