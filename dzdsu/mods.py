@@ -25,26 +25,26 @@ class Mod(NamedTuple):
         return LINK.format(url=self.url, text=self.name or self.id)
 
     @classmethod
-    def from_int(cls, integer: int, *, name: Optional[str] = None) -> Mod:
-        """Creates a mod from an integer."""
-        if integer == 0:
-            raise ValueError(f'Invalid mod ID: {integer}')
+    def from_id(cls, ident: int, *, name: Optional[str] = None) -> Mod:
+        """Creates a mod from an ID."""
+        if ident == 0:
+            raise ValueError(f'Invalid mod ID: {ident}')
 
-        if integer < 0:
-            return cls(abs(integer), name, enabled=False)
+        if ident < 0:
+            return cls(abs(ident), name, enabled=False)
 
-        return cls(integer, name)
+        return cls(ident, name)
 
     @classmethod
     def from_json(cls, json: dict[str, int | str]) -> Mod:
         """Creates a mod from a JSON-ish dict."""
-        return cls.from_int(json['id'], name=json.get('name'))
+        return cls.from_id(json['id'], name=json.get('name'))
 
     @classmethod
     def from_value(cls, value: int | dict[str, int | str]) -> Mod:
         """Creates a mod from an int or JSON value."""
         if isinstance(value, int):
-            return cls.from_int(value)
+            return cls.from_id(value)
 
         if isinstance(value, dict):
             return cls.from_json(value)
