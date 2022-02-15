@@ -1,6 +1,5 @@
 """Server start parameters."""
 
-from multiprocessing import cpu_count
 from typing import NamedTuple, Iterator, Optional
 
 from dzdsu.constants import CONFIG_FILE
@@ -36,7 +35,7 @@ class ServerParams(NamedTuple):
             json.get('freezeCheck', True),
             json.get('port'),
             json.get('profiles'),
-            json.get('cpuCount', cpu_count())
+            json.get('cpuCount')
         )
 
     @property
