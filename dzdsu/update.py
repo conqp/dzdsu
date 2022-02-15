@@ -13,6 +13,7 @@ class Updater:
     """SteamCMD wrapper to update server and mods."""
 
     def __init__(self, server: Server, steam_user_name: str):
+        """Sets server name and initial command."""
         self.server = server
         self.commands = [
             '+force_install_dir', str(server.base_dir),
