@@ -36,6 +36,10 @@ The outermost object defines key-value pairs of server names and server objects.
             "description": "The server's Steam app ID",
             "type": "integer"
         },
+        "wine": {
+            "description": "Wrap server and steamcmd wth wine",
+            "type": "boolean"
+        },
         "params": {
             "description": "Additional parameters for the server",
             "type": "ServerParams"

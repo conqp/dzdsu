@@ -11,9 +11,11 @@ from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
+from dzdsu.constants import SERVER_EXECUTABLE_WIN
+from dzdsu.constants import WINE
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
-from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
+from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg, wine_path
 
 
 __all__ = ['Server', 'load_servers']
@@ -28,7 +30,7 @@ class Server(NamedTuple):
     mods: list[Mod]
     server_mods: list[Mod]
     params: ServerParams
-    executable: str | list[str]
+    wine: bool
 
     @classmethod
     def from_json(cls, name: str, json: dict):
@@ -40,7 +42,7 @@ class Server(NamedTuple):
             [Mod.from_value(mod) for mod in (json.get('mods') or [])],
             [Mod.from_value(mod) for mod in (json.get('serverMods') or [])],
             ServerParams.from_json(json.get('params') or {}),
-            json.get('executable', SERVER_EXECUTABLE)
+            json.get('wine', False)
         )
 
     @property
@@ -55,18 +57,25 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
-    def executable_list(self) -> list[str]:
-        """Returns the executable path."""
-        if isinstance(self.executable, str):
-            return [self._make_absolute(self.executable)]
+    def executable(self) -> list[str]:
+        """Returns the executable args."""
+        if self.wine:
+            return [WINE, str(self.base_dir / SERVER_EXECUTABLE_WIN)]
 
-        executable, *args = self.executable
-        return [self._make_absolute(executable), *args]
+        return [str(self.base_dir / SERVER_EXECUTABLE)]
 
     @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        return [*self.executable_list, *self.executable_args]
+        return [*self.executable, *self.executable_args]
+
+    @property
+    def install_dir(self) -> str:
+        """Returns the installation directory for steamcmd."""
+        if self.wine:
+            return wine_path(self.base_dir)
+
+        return str(self.base_dir)
 
     @property
     def mods_dir(self) -> Path:
@@ -124,13 +133,6 @@ class Server(NamedTuple):
         for meta in self.installed_mods_metadata:
             if meta.publishedid not in used_ids:
                 yield InstalledMod(meta.publishedid, self.base_dir)
-
-    def _make_absolute(self, executable: str) -> str:
-        """Returns an absolute path to the executable."""
-        if Path(executable).is_absolute():
-            return executable
-
-        return str(self.base_dir / executable)
 
 
 def load_servers_json(file: Path) -> dict[str, Any]:

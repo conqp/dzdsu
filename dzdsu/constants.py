@@ -18,6 +18,7 @@ __all__ = [
     'SERVER_EXECUTABLE_WIN',
     'STEAMCMD',
     'STEAMCMD_WINE',
+    'WINE',
     'WORKSHOP_URL'
 ]
 
@@ -31,6 +32,7 @@ MODS_DIR = MODS_BASE_DIR / str(DAYZ_APP_ID)
 SERVER_EXECUTABLE_WIN = 'DayZServer_x64.exe'
 STEAMCMD = 'steamcmd'
 STEAMCMD_WINE = '.steamcmd/steamcmd.exe'
+WINE = '/usr/bin/wine'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
 ITALIC = '\033[3m{}\033[0m'
