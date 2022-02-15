@@ -39,8 +39,9 @@ class ServerParams(NamedTuple):
             json.get('cpuCount', cpu_count())
         )
 
-    def get_binary_args(self) -> Iterator[str]:
-        """Yields arguments for the server binary."""
+    @property
+    def executable_args(self) -> Iterator[str]:
+        """Yields arguments for the server executable."""
         yield f'-config={self.config}'
 
         if self.do_logs:

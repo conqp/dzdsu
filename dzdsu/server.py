@@ -41,9 +41,15 @@ class Server(NamedTuple):
             ServerParams.from_json(json.get('params') or {})
         )
 
-    def get_binary_args(self) -> Iterator[str]:
-        """Yields arguments for the server binary."""
-        yield from self.params.get_binary_args()
+    @property
+    def executable(self) -> Path:
+        """Returns the absolute path to the server's executable file."""
+        return self.base_dir / SERVER_EXECUTABLE
+
+    @property
+    def executable_args(self) -> Iterator[str]:
+        """Yields arguments for the server executable."""
+        yield from self.params.executable_args
 
         if mods := mods_str(mod for mod in self.mods if mod.enabled):
             yield f'-mod={mods}'
@@ -52,14 +58,9 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
-    def executable(self) -> Path:
-        """Returns the absolute path to the server's executable file."""
-        return self.base_dir / SERVER_EXECUTABLE
-
-    @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        return [str(self.executable), *self.get_binary_args()]
+        return [str(self.executable), *self.executable_args]
 
     @property
     def mods_dir(self) -> Path:
