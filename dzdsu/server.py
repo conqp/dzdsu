@@ -28,6 +28,7 @@ class Server(NamedTuple):
     mods: list[Mod]
     server_mods: list[Mod]
     params: ServerParams
+    executable: str | list[str]
 
     @classmethod
     def from_json(cls, name: str, json: dict):
@@ -38,13 +39,9 @@ class Server(NamedTuple):
             Path(json['basedir']),
             [Mod.from_value(mod) for mod in (json.get('mods') or [])],
             [Mod.from_value(mod) for mod in (json.get('serverMods') or [])],
-            ServerParams.from_json(json.get('params') or {})
+            ServerParams.from_json(json.get('params') or {}),
+            json.get('executable', SERVER_EXECUTABLE)
         )
-
-    @property
-    def executable(self) -> Path:
-        """Returns the absolute path to the server's executable file."""
-        return self.base_dir / SERVER_EXECUTABLE
 
     @property
     def executable_args(self) -> Iterator[str]:
@@ -58,9 +55,18 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
+    def executable_list(self) -> list[str]:
+        """Returns the executable path."""
+        if isinstance(self.executable, str):
+            return [self._make_absolute(self.executable)]
+
+        executable, *args = self.executable
+        return [self._make_absolute(executable), *args]
+
+    @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        return [str(self.executable), *self.executable_args]
+        return [*self.executable_list, *self.executable_args]
 
     @property
     def mods_dir(self) -> Path:
@@ -118,6 +124,13 @@ class Server(NamedTuple):
         for meta in self.installed_mods_metadata:
             if meta.publishedid not in used_ids:
                 yield InstalledMod(meta.publishedid, self.base_dir)
+
+    def _make_absolute(self, executable: str) -> str:
+        """Returns an absolute path to the executable."""
+        if Path(executable).is_absolute():
+            return executable
+
+        return str(self.base_dir / executable)
 
 
 def load_servers_json(file: Path) -> dict[str, Any]:

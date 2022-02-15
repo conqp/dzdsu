@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 from subprocess import CompletedProcess, run
-from typing import Iterable
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
 from dzdsu.server import Server
@@ -16,7 +15,7 @@ class Updater:
 
     def __init__(
             self, server: Server, steam_user_name: str, *,
-            steamcmd: str | Iterable[str] = STEAMCMD
+            steamcmd: str | list[str] = STEAMCMD
     ):
         """Sets server name and initial command."""
         self.server = server

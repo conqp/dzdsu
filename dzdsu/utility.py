@@ -4,7 +4,7 @@ from argparse import ArgumentParser, Namespace
 from logging import INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
-from dzdsu.constants import JSON_FILE
+from dzdsu.constants import JSON_FILE, STEAMCMD, STEAMCMD_WINE
 from dzdsu.mods import print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
@@ -53,11 +53,15 @@ def get_args(description: str = __doc__) -> Namespace:
         help='update server and/or mods'
     )
     parser.add_argument(
+        '-m', '--update-mods', action='store_true',
+        help="update the server's mods"
+    )
+    parser.add_argument(
         '-s', '--update-server', action='store_true', help='update server'
     )
     parser.add_argument(
-        '-m', '--update-mods', action='store_true',
-        help="update the server's mods"
+        '-w', '--wine', metavar='steamcmd_exe',
+        help="use steamcmd wrapped by wine instead of native implementation"
     )
     parser.add_argument(
         '--overwrite', action='store_true', help="overwrite existing key files"
@@ -99,7 +103,12 @@ def fix_mod_paths(server: Server) -> None:
 def update(server: Server, args: Namespace) -> None:
     """Perform server and mod updates."""
 
-    updater = Updater(server, args.update)
+    if args.wine:
+        steamcmd = ['wine', str(server.base_dir / STEAMCMD_WINE)]
+    else:
+        steamcmd = STEAMCMD
+
+    updater = Updater(server, args.update, steamcmd=steamcmd)
 
     if args.update_server:
         updater.update_server()
