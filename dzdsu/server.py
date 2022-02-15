@@ -8,6 +8,7 @@ from typing import Any, Iterator, NamedTuple
 
 from dzdsu.constants import BATTLEYE_GLOB
 from dzdsu.constants import DAYZ_SERVER_APP_ID
+from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
@@ -126,7 +127,7 @@ def load_servers_json(file: Path) -> dict[str, Any]:
         return load(json)
 
 
-def load_servers(file: Path) -> dict[str, Server]:
+def load_servers(file: Path = JSON_FILE) -> dict[str, Server]:
     """Loads servers."""
 
     return {
