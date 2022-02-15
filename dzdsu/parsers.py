@@ -62,6 +62,6 @@ def wine_path(path: Path, *, drive: str = 'Z:') -> str:
     """Converts a path to a path for Wine."""
 
     if path.is_absolute():
-        return '\\'.join([drive, path.parts[1:]])
+        return '\\'.join([drive, *path.parts[1:]])
 
     return '\\'.join(path.parts)
