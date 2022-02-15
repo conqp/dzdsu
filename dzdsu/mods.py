@@ -3,7 +3,7 @@
 from __future__ import annotations
 from pathlib import Path
 from shutil import rmtree
-from typing import Iterable, Iterator, NamedTuple, Optional, Union
+from typing import Iterable, Iterator, NamedTuple, Optional
 
 from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
@@ -36,12 +36,12 @@ class Mod(NamedTuple):
         return cls(integer, name)
 
     @classmethod
-    def from_json(cls, json: dict[str, Union[int, str]]) -> Mod:
+    def from_json(cls, json: dict[str, int | str]) -> Mod:
         """Creates a mod from a JSON-ish dict."""
         return cls.from_int(json['id'], name=json.get('name'))
 
     @classmethod
-    def from_value(cls, value: Union[int, dict[str, Union[int, str]]]) -> Mod:
+    def from_value(cls, value: int | dict[str, int | str]) -> Mod:
         """Creates a mod from an int or JSON value."""
         if isinstance(value, int):
             return cls.from_int(value)
