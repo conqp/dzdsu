@@ -1,7 +1,6 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
-from datetime import datetime
 from pathlib import Path
 from shutil import rmtree
 from typing import Iterable, Iterator, NamedTuple, Optional, Union
@@ -9,7 +8,6 @@ from typing import Iterable, Iterator, NamedTuple, Optional, Union
 from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_DIR
-from dzdsu.constants import TIMESTAMP_OFFSET
 from dzdsu.constants import WORKSHOP_URL
 
 
@@ -98,15 +96,6 @@ class ModMetadata(NamedTuple):
         """Reads the mod metadata from the given file."""
         with filename.open('r', encoding='utf-8') as file:
             return cls.from_lines(file)
-
-    @property
-    def datetime(self) -> datetime:
-        """Returns the parsed datetime from the timestamp.
-        Beware that the timestamp might be broken.
-        """
-        return datetime.fromtimestamp(
-            self.timestamp / 10_000_000 + TIMESTAMP_OFFSET.timestamp() * 10
-        )
 
 
 class InstalledMod(NamedTuple):

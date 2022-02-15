@@ -1,6 +1,5 @@
 """Common constants."""
 
-from datetime import datetime
 from os import environ, name
 from pathlib import Path
 
@@ -17,7 +16,6 @@ __all__ = [
     'MODS_DIR',
     'SERVER_EXECUTABLE',
     'STEAMCMD',
-    'TIMESTAMP_OFFSET',
     'WORKSHOP_URL'
 ]
 
@@ -29,7 +27,6 @@ DAYZ_SERVER_APP_ID = 223350
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 MODS_DIR = MODS_BASE_DIR / str(DAYZ_APP_ID)
 STEAMCMD = 'steamcmd'
-TIMESTAMP_OFFSET = datetime(311, 9, 19, 21, 9, 1, 300000)   # Some magic here.
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
 ITALIC = '\033[3m{}\033[0m'
