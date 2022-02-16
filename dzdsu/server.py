@@ -25,6 +25,7 @@ class Server(NamedTuple):
     name: str
     app_id: int
     base_dir: Path
+    executable: Path
     mods: list[Mod]
     server_mods: list[Mod]
     params: ServerParams
@@ -36,6 +37,7 @@ class Server(NamedTuple):
             name,
             json.get('appId', DAYZ_SERVER_APP_ID),
             Path(json['basedir']),
+            Path(json.get('executable', SERVER_EXECUTABLE)),
             [Mod.from_value(mod) for mod in (json.get('mods') or [])],
             [Mod.from_value(mod) for mod in (json.get('serverMods') or [])],
             ServerParams.from_json(json.get('params') or {})
@@ -53,14 +55,12 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
-    def executable(self) -> list[str]:
-        """Returns the executable args."""
-        return [str(self.base_dir / SERVER_EXECUTABLE)]
-
-    @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        return [*self.executable, *self.executable_args]
+        if self.executable.is_absolute():
+            return [str(self.executable), *self.executable_args]
+
+        return [str(self.base_dir / self.executable), *self.executable_args]
 
     @property
     def mods_dir(self) -> Path:
