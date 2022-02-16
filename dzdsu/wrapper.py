@@ -1,7 +1,7 @@
 """Server wrapper."""
 
 from argparse import ArgumentParser, Namespace
-from logging import INFO, WARNING, basicConfig, getLogger
+from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 from subprocess import run
 
@@ -30,6 +30,9 @@ def get_args(description: str = __doc__) -> Namespace:
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging'
     )
+    parser.add_argument(
+        '-d', '--debug', action='store_true', help='debug logging'
+    )
     return parser.parse_args()
 
 
@@ -37,7 +40,9 @@ def main() -> int:
     """Starts the DayZ server."""
 
     args = get_args()
-    basicConfig(level=INFO if args.verbose else WARNING)
+    basicConfig(
+        level=DEBUG if args.debug else INFO if args.verbose else WARNING
+    )
     servers = load_servers(args.servers_file)
     env = None
 

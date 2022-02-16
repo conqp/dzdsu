@@ -1,6 +1,7 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
+from logging import getLogger
 from pathlib import Path
 from shutil import rmtree
 from typing import Iterable, Iterator, NamedTuple, Optional
@@ -169,6 +170,7 @@ def link_to_lowercase(path: Path) -> None:
     if (symlink := path.parent / lower).exists():
         return
 
+    getLogger(__file__).debug('Linking "%s" to "%s".', filename, symlink)
     symlink.symlink_to(filename)
 
 

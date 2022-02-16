@@ -1,7 +1,7 @@
 """Server utility."""
 
 from argparse import ArgumentParser, Namespace
-from logging import INFO, WARNING, basicConfig, getLogger
+from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
 
 from dzdsu.constants import JSON_FILE
@@ -65,6 +65,9 @@ def get_args(description: str = __doc__) -> Namespace:
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging output'
     )
+    parser.add_argument(
+        '-d', '--debug', action='store_true', help='debug logging'
+    )
     return parser.parse_args()
 
 
@@ -93,6 +96,7 @@ def fix_mod_paths(server: Server) -> None:
     """Fix paths of the server mods."""
 
     for installed_mod in server.installed_mods:
+        LOGGER.info('Fixing paths of: %s', installed_mod.mod)
         installed_mod.fix_paths()
 
 
@@ -114,7 +118,9 @@ def main() -> int:
     """Update mods."""
 
     args = get_args()
-    basicConfig(level=INFO if args.verbose else WARNING)
+    basicConfig(
+        level=DEBUG if args.debug else INFO if args.verbose else WARNING
+    )
     servers = load_servers(args.servers_file)
 
     try:
