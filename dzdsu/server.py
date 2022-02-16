@@ -11,11 +11,9 @@ from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
-from dzdsu.constants import SERVER_EXECUTABLE_WIN
-from dzdsu.constants import WINE
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
-from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg, wine_path
+from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
 
 
 __all__ = ['Server', 'load_servers']
@@ -30,7 +28,6 @@ class Server(NamedTuple):
     mods: list[Mod]
     server_mods: list[Mod]
     params: ServerParams
-    wine: bool
 
     @classmethod
     def from_json(cls, name: str, json: dict):
@@ -41,8 +38,7 @@ class Server(NamedTuple):
             Path(json['basedir']),
             [Mod.from_value(mod) for mod in (json.get('mods') or [])],
             [Mod.from_value(mod) for mod in (json.get('serverMods') or [])],
-            ServerParams.from_json(json.get('params') or {}),
-            json.get('wine', False)
+            ServerParams.from_json(json.get('params') or {})
         )
 
     @property
@@ -59,23 +55,12 @@ class Server(NamedTuple):
     @property
     def executable(self) -> list[str]:
         """Returns the executable args."""
-        if self.wine:
-            return [WINE, str(self.base_dir / SERVER_EXECUTABLE_WIN)]
-
         return [str(self.base_dir / SERVER_EXECUTABLE)]
 
     @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
         return [*self.executable, *self.executable_args]
-
-    @property
-    def install_dir(self) -> str:
-        """Returns the installation directory for steamcmd."""
-        if self.wine:
-            return wine_path(self.base_dir)
-
-        return str(self.base_dir)
 
     @property
     def mods_dir(self) -> Path:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 from subprocess import CompletedProcess, run
 
-from dzdsu.constants import DAYZ_APP_ID, STEAMCMD, STEAMCMD_WINE, WINE
+from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
 from dzdsu.server import Server
 
 
@@ -17,7 +17,7 @@ class Updater:
         """Sets server name and initial command."""
         self.server = server
         self.commands = [
-            '+force_install_dir', server.install_dir,
+            '+force_install_dir', str(server.base_dir),
             '+login', steam_user_name
         ]
 
@@ -30,17 +30,9 @@ class Updater:
         return run(self.command, check=True)
 
     @property
-    def steamcmd(self) -> list[str]:
-        """Returns the steamcmd command and args list."""
-        if self.server.wine:
-            return [WINE, str(self.server.base_dir / STEAMCMD_WINE)]
-
-        return [STEAMCMD]
-
-    @property
     def command(self) -> list[str]:
         """Returns the command."""
-        return [*self.steamcmd, *self.commands, '+quit']
+        return [STEAMCMD, *self.commands, '+quit']
 
     def update_server(self) -> Updater:
         """Updates the server."""
