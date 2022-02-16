@@ -1,5 +1,6 @@
 """Server start parameters."""
 
+from ipaddress import IPv4Address, IPv6Address, ip_address
 from typing import NamedTuple, Iterator, Optional
 
 from dzdsu.constants import CONFIG_FILE
@@ -18,6 +19,7 @@ class ServerParams(NamedTuple):
     src_allow_file_write: bool = True
     no_file_patching: bool = True
     freeze_check: bool = True
+    ip: Optional[IPv4Address | IPv6Address] = None
     port: Optional[int] = None
     profiles: Optional[str] = None
     cpu_count: Optional[int] = None
@@ -33,6 +35,7 @@ class ServerParams(NamedTuple):
             json.get('srcAllowFileWrite', True),
             json.get('noFilePatching', True),
             json.get('freezeCheck', True),
+            None if (ip := json.get('ip')) is None else ip_address(ip),
             json.get('port'),
             json.get('profiles'),
             json.get('cpuCount')
@@ -60,6 +63,9 @@ class ServerParams(NamedTuple):
 
         if self.freeze_check:
             yield '-freezeCheck'
+
+        if self.ip is not None:
+            yield f'-ip={self.ip}'
 
         if self.port is not None:
             yield f'-port={self.port}'
