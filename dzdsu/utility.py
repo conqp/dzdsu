@@ -27,10 +27,6 @@ def get_args(description: str = __doc__) -> Namespace:
         help='the name of the server to start'
     )
     parser.add_argument(
-        '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
-        help='servers JSON file path'
-    )
-    parser.add_argument(
         '-C', '--clean-mods', action='store_true', help='remove unused mods'
     )
     parser.add_argument(
@@ -63,6 +59,13 @@ def get_args(description: str = __doc__) -> Namespace:
         help='update server and/or mods'
     )
     parser.add_argument(
+        '-d', '--debug', action='store_true', help='debug logging'
+    )
+    parser.add_argument(
+        '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
+        help='servers JSON file path'
+    )
+    parser.add_argument(
         '-m', '--update-mods', action='store_true',
         help="update the server's mods"
     )
@@ -74,17 +77,14 @@ def get_args(description: str = __doc__) -> Namespace:
         help='grace time to wait before server restart'
     )
     parser.add_argument(
+        '-v', '--verbose', action='store_true', help='verbose logging output'
+    )
+    parser.add_argument(
         '--message', default=SHUTDOWN_MESSAGE,
         help='RCon message template to warn users about restart'
     )
     parser.add_argument(
         '--overwrite', action='store_true', help="overwrite existing key files"
-    )
-    parser.add_argument(
-        '-v', '--verbose', action='store_true', help='verbose logging output'
-    )
-    parser.add_argument(
-        '-d', '--debug', action='store_true', help='debug logging'
     )
     return parser.parse_args()
 
