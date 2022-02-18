@@ -154,6 +154,26 @@ class Server(NamedTuple):
         """Checks whether the server needs a restart."""
         return hash_changed(self.hashes, self.load_hashes())
 
+    @property
+    def pid_file(self) -> Path:
+        """Returns the path to the PID file."""
+        return self.base_dir / '.pidfile'
+
+    @property
+    def pid(self) -> int | None:
+        """Reads the server's PID."""
+        try:
+            with self.pid_file.open('rb') as file:
+                return load(file)
+        except FileNotFoundError:
+            return None
+
+    @pid.setter
+    def pid(self, pid: int) -> None:
+        """Sets the server's PID."""
+        with self.pid_file.open('wb') as file:
+            dump(pid, file)
+
     def update_hashes(self) -> None:
         """Updates the hashes file."""
         with self.hashes_file.open('wb') as file:
