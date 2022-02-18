@@ -12,10 +12,10 @@ __all__ = [
     'ITALIC',
     'JSON_FILE',
     'LINK',
-    'MESSAGE',
     'MODS_BASE_DIR',
     'MODS_DIR',
     'SERVER_EXECUTABLE',
+    'SHUTDOWN_MESSAGE',
     'STEAMCMD',
     'WORKSHOP_URL'
 ]
@@ -25,9 +25,9 @@ BATTLEYE_GLOB = 'battleye/beserver_x64*.cfg'
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
-MESSAGE = 'Server is going down for maintenance in {}!'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 MODS_DIR = MODS_BASE_DIR / str(DAYZ_APP_ID)
+SHUTDOWN_MESSAGE = 'Server is going down for maintenance in {}!'
 STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 

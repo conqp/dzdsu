@@ -15,6 +15,7 @@ from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
+from dzdsu.constants import SHUTDOWN_MESSAGE
 from dzdsu.hash import hash_changed
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
@@ -207,7 +208,11 @@ class Server(NamedTuple):
                 sleep(1)
                 rcon.login(rcon.passwd)
 
-    def notify_shutdown(self, template: str, grace_time: int = 120) -> bool:
+    def notify_shutdown(
+            self,
+            template: str = SHUTDOWN_MESSAGE,
+            grace_time: int = 120
+    ) -> bool:
         """Notify users about shutdown."""
         if grace_time <= 0:
             return True

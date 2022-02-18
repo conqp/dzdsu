@@ -6,7 +6,7 @@ from os import kill
 from pathlib import Path
 from signal import SIGINT
 
-from dzdsu.constants import JSON_FILE, MESSAGE
+from dzdsu.constants import JSON_FILE, SHUTDOWN_MESSAGE
 from dzdsu.mods import print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
@@ -74,7 +74,7 @@ def get_args(description: str = __doc__) -> Namespace:
         help='grace time to wait before server restart'
     )
     parser.add_argument(
-        '--message', default=MESSAGE,
+        '--message', default=SHUTDOWN_MESSAGE,
         help='RCon message template to warn users about restart'
     )
     parser.add_argument(
