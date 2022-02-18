@@ -175,12 +175,12 @@ class Server(NamedTuple):
     @pid.setter
     def pid(self, pid: int) -> None:
         """Sets the server's PID."""
-        with self.pid_file.open('wb') as file:
+        with self.pid_file.open('w', encoding='utf-8') as file:
             dump(pid, file)
 
     def update_hashes(self) -> None:
         """Updates the hashes file."""
-        with self.hashes_file.open('wb') as file:
+        with self.hashes_file.open('w', encoding='utf-8') as file:
             dump(self.hashes, file)
 
     def load_hashes(self) -> dict[str, str]:
@@ -237,7 +237,7 @@ class Server(NamedTuple):
 def load_servers_json(file: Path) -> dict[str, Any]:
     """Loads servers from a JSON file."""
 
-    with file.open('r') as json:
+    with file.open('rb') as json:
         return load(json)
 
 
