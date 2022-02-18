@@ -2,7 +2,9 @@
 
 from argparse import ArgumentParser, Namespace
 from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
+from os import kill
 from pathlib import Path
+from signal import SIGINT
 
 from dzdsu.constants import JSON_FILE
 from dzdsu.mods import print_mods
@@ -43,6 +45,10 @@ def get_args(description: str = __doc__) -> Namespace:
     )
     parser.add_argument(
         '-M', '--list-mods', action='store_true', help="list the server's mods"
+    )
+    parser.add_argument(
+        '-R', '--kill', action='store_true',
+        help="kill the server if it needs a restart"
     )
     parser.add_argument(
         '-S', '--list-server-mods', action='store_true',
@@ -114,6 +120,24 @@ def update(server: Server, args: Namespace) -> None:
     updater()
 
 
+def kill_if_needs_restart(server: Server) -> None:
+    """Kill the server iff it needs a restart."""
+
+    if (pid := server.pid) is None:
+        LOGGER.error('No PID found for server.')
+        return
+
+    if not server.needs_restart:
+        return
+
+    server.update_hashes()
+
+    try:
+        kill(pid, SIGINT)
+    except ProcessLookupError:
+        LOGGER.error('Could not find process with PID: %i', pid)
+
+
 def main() -> int:
     """Update mods."""
 
@@ -152,5 +176,8 @@ def main() -> int:
             lambda installed_mod: installed_mod.mod,
             server.installed_mods
         )))
+
+    if args.kill:
+        kill_if_needs_restart(server)
 
     return 0
