@@ -47,6 +47,10 @@ def get_args(description: str = __doc__) -> Namespace:
         '-M', '--list-mods', action='store_true', help="list the server's mods"
     )
     parser.add_argument(
+        '-N', '--needs-restart', action='store_true',
+        help="check whether the server needs a restart"
+    )
+    parser.add_argument(
         '-R', '--kill', action='store_true',
         help="kill the server if it needs a restart"
     )
@@ -176,6 +180,9 @@ def main() -> int:
             lambda installed_mod: installed_mod.mod,
             server.installed_mods
         )))
+
+    if args.needs_restart:
+        return 1 if server.needs_restart else None
 
     if args.kill:
         kill_if_needs_restart(server)
