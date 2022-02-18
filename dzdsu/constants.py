@@ -1,6 +1,6 @@
 """Common constants."""
 
-from os import environ, name
+from os import getenv, name
 from pathlib import Path
 
 
@@ -33,7 +33,7 @@ ITALIC = '\033[3m{}\033[0m'
 LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\'
 
 if name == 'nt':
-    JSON_FILE = Path(environ.get('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
+    JSON_FILE = Path(getenv('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
     SERVER_EXECUTABLE = 'DayZServer_x64.exe'
 elif name == 'posix':
     JSON_FILE = Path('/etc/dzservers.json')
