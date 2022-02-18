@@ -181,7 +181,7 @@ class Server(NamedTuple):
     def update_hashes(self) -> None:
         """Updates the hashes file."""
         with self.hashes_file.open('wb') as file:
-            return dump(self.hashes, file)
+            dump(self.hashes, file)
 
     def load_hashes(self) -> dict[str, str]:
         """Loads hashes for the server."""
