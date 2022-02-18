@@ -135,6 +135,27 @@ class Server(NamedTuple):
             if meta.publishedid not in used_ids:
                 yield InstalledMod(meta.publishedid, self.base_dir)
 
+    @property
+    def hashes_file(self) -> Path:
+        """Returns a hashes file."""
+        return self.base_dir / '.hashes.json'
+
+    @property
+    def hash(self) -> dict[str, str]:
+        """Returns the server's and its mods' hashes."""
+        return {
+            'server': self.sha1sum,
+            **{str(mod.id): mod.sha1sum for mod in self.used_mods}
+        }
+
+    def load_hashes(self) -> dict[str, str]:
+        """Loads hashes for the server."""
+        try:
+            with self.hashes_file.open('rb') as file:
+                return load(file)
+        except FileNotFoundError:
+            return {}
+
 
 def load_servers_json(file: Path) -> dict[str, Any]:
     """Loads servers from a JSON file."""
