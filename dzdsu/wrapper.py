@@ -28,7 +28,12 @@ def get_args(description: str = __doc__) -> Namespace:
         help='servers JSON file path'
     )
     parser.add_argument(
-        '--fork', action='store_true', help='fork server process to background'
+        '-F', '--fork', action='store_true',
+        help='fork server process to background'
+    )
+    parser.add_argument(
+        '-p', '--store-pid', action='store_true',
+        help="store the process' PID in its PID file"
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging'
@@ -57,8 +62,10 @@ def main() -> int:
 
     proc = Popen(server.command, cwd=server.base_dir, env=env)
 
-    if not args.fork:
-        return proc.wait()
+    if args.store_pid:
+        server.pid = proc.pid
 
-    server.pid = proc.pid
-    return 0
+    if args.fork:
+        return 0
+
+    return proc.wait()
