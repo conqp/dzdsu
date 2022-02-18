@@ -5,7 +5,10 @@ from hashlib import sha1
 from itertools import chain
 from json import dump, load
 from pathlib import Path
+from time import sleep
 from typing import Any, Iterator, NamedTuple
+
+from rcon.battleye import Client
 
 from dzdsu.constants import BATTLEYE_GLOB
 from dzdsu.constants import DAYZ_SERVER_APP_ID
@@ -186,6 +189,44 @@ class Server(NamedTuple):
                 return load(file)
         except FileNotFoundError:
             return {}
+
+    def rcon(self, timeout: float | None = None):
+        """Returns an RCon client."""
+        return Client(
+            (config := self.battleye_cfg).get('RConIP', '127.0.0.1'),
+            config.get('RConPort', 2302),
+            passwd=config['RConPassword'],
+            timeout=timeout
+        )
+
+    def _notify_shutdown(self, template: str, grace_time: int) -> None:
+        """Notify users about shutdown."""
+        with self.rcon(timeout=1) as rcon:
+            for passed in range(grace_time):
+                rcon.run(f'say -1 {template.format(grace_time - passed)}')
+                sleep(1)
+                rcon.login(rcon.passwd)
+
+    def notify_shutdown(self, template: str, grace_time: int = 120) -> bool:
+        """Notify users about shutdown."""
+        if grace_time <= 0:
+            return True
+
+        try:
+            self._notify_shutdown(template, grace_time)
+        except (ConnectionRefusedError, TimeoutError):
+            return False
+
+    def kick(self, player: int, reason: str) -> None:
+        """Kicks the respective player."""
+        with self.rcon(timeout=1) as rcon:
+            rcon.run(f'kick {player} {reason}')
+
+    def kick_all(self, reason: str) -> None:
+        """Kick all players."""
+        with self.rcon(timeout=1) as rcon:
+            for player in range(self.config.getint('maxPlayers')):
+                rcon.run(f'kick {player} {reason}')
 
 
 def load_servers_json(file: Path) -> dict[str, Any]:

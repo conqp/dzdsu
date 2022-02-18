@@ -6,7 +6,7 @@ from os import kill
 from pathlib import Path
 from signal import SIGINT
 
-from dzdsu.constants import JSON_FILE
+from dzdsu.constants import JSON_FILE, MESSAGE
 from dzdsu.mods import print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
@@ -70,6 +70,14 @@ def get_args(description: str = __doc__) -> Namespace:
         '-s', '--update-server', action='store_true', help='update server'
     )
     parser.add_argument(
+        '-t', '--gracetime', type=int, default=120,
+        help='grace time to wait before server restart'
+    )
+    parser.add_argument(
+        '--message', default=MESSAGE,
+        help='RCon message template to warn users about restart'
+    )
+    parser.add_argument(
         '--overwrite', action='store_true', help="overwrite existing key files"
     )
     parser.add_argument(
@@ -124,7 +132,9 @@ def update(server: Server, args: Namespace) -> None:
     updater()
 
 
-def kill_if_needs_restart(server: Server) -> None:
+def kill_if_needs_restart(
+        server: Server, message: str, grace_time: int
+) -> None:
     """Kill the server iff it needs a restart."""
 
     if (pid := server.pid) is None:
@@ -135,6 +145,12 @@ def kill_if_needs_restart(server: Server) -> None:
         return
 
     server.update_hashes()
+
+    if not server.notify_shutdown(message, grace_time=grace_time):
+        LOGGER.error('Could not notify users about shutdown.')
+        return
+
+    server.kick_all('Server restart.')
 
     try:
         kill(pid, SIGINT)
@@ -185,6 +201,6 @@ def main() -> int:
         return 1 if server.needs_restart else None
 
     if args.kill:
-        kill_if_needs_restart(server)
+        kill_if_needs_restart(server, args.message, args.gracetime)
 
     return 0
