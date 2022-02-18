@@ -142,15 +142,20 @@ def kill_if_needs_restart(
         return
 
     if not server.needs_restart:
+        LOGGER.info('Everything up-to-date. No restart required.')
         return
 
+    LOGGER.info('Updates detected. Updating hashes.')
     server.update_hashes()
+    LOGGER.info(f'Notifying users. Please wait {grace_time} seconds.')
 
     if not server.notify_shutdown(message, grace_time=grace_time):
         LOGGER.error('Could not notify users about shutdown.')
         return
 
+    LOGGER.info(f'Kicking remaining users.')
     server.kick_all('Server restart.')
+    LOGGER.info(f'Stopping server.')
 
     try:
         kill(pid, SIGINT)
