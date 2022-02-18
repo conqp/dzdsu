@@ -118,14 +118,18 @@ class Server(NamedTuple):
             yield InstalledMod(meta.publishedid, self.base_dir)
 
     @property
-    def used_mods(self) -> Iterator[Mod]:
+    def used_mods(self) -> Iterator[InstalledMod]:
         """Yields used mods."""
-        return chain(self.mods, self.server_mods)
+        used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
+
+        for meta in self.installed_mods_metadata:
+            if meta.publishedid in used_ids:
+                yield InstalledMod(meta.publishedid, self.base_dir)
 
     @property
     def unused_mods(self) -> Iterator[InstalledMod]:
         """Yields unused mods."""
-        used_ids = {mod.id for mod in self.used_mods}
+        used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
 
         for meta in self.installed_mods_metadata:
             if meta.publishedid not in used_ids:
