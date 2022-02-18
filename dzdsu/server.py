@@ -3,7 +3,7 @@
 from configparser import SectionProxy
 from hashlib import sha1
 from itertools import chain
-from json import load
+from json import dump, load
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
@@ -153,6 +153,11 @@ class Server(NamedTuple):
     def needs_restart(self) -> bool:
         """Checks whether the server needs a restart."""
         return hash_changed(self.hashes, self.load_hashes())
+
+    def update_hashes(self) -> None:
+        """Updates the hashes file."""
+        with self.hashes_file.open('wb') as file:
+            return dump(self.hashes, file)
 
     def load_hashes(self) -> dict[str, str]:
         """Loads hashes for the server."""
