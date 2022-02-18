@@ -1,0 +1,18 @@
+"""Watchdog to detect server and mod updates."""
+
+
+__all__ = ['hash_changed']
+
+
+def hash_changed(old: dict[str, str], new: dict[str, str]) -> bool:
+    """Returns True iff the hashes are considered equal."""
+
+    for key, value in old.items():
+        if (new_value := new.get(key)) is not None and new_value != value:
+            return True
+
+    for key in new.keys():
+        if key not in old:
+            return True
+
+    return False
