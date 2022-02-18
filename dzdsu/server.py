@@ -67,6 +67,7 @@ class Server(NamedTuple):
     def executable_args(self) -> Iterator[str]:
         """Yields arguments for the server executable."""
         yield from self.params.executable_args
+        yield f'-BEpath={self.battleye_dir}'
 
         if mods := mods_str(mod for mod in self.mods if mod.enabled):
             yield f'-mod={mods}'
@@ -85,9 +86,14 @@ class Server(NamedTuple):
         return self.base_dir / MODS_DIR
 
     @property
+    def battleye_dir(self) -> Path:
+        """Returns the profile directory."""
+        return self.base_dir / 'battleye'
+
+    @property
     def battleye_cfg_file(self) -> Path:
         """Returns the BattlEye RCon config file."""
-        for path in self.base_dir.glob(BATTLEYE_GLOB):
+        for path in self.battleye_dir.glob(BATTLEYE_GLOB):
             if path.is_file():
                 return path
 

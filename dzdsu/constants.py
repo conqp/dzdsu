@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 
-BATTLEYE_GLOB = 'battleye/beserver_x64*.cfg'
+BATTLEYE_GLOB = 'beserver_x64*.cfg'
 CONFIG_FILE = 'serverDZ.cfg'
 DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
