@@ -73,14 +73,14 @@ def get_args(description: str = __doc__) -> Namespace:
         '-s', '--update-server', action='store_true', help='update server'
     )
     parser.add_argument(
-        '-t', '--gracetime', type=int, default=120,
+        '-t', '--gracetime', type=int, default=120, metavar='seconds',
         help='grace time to wait before server restart'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging output'
     )
     parser.add_argument(
-        '--message', default=SHUTDOWN_MESSAGE,
+        '--message', default=SHUTDOWN_MESSAGE, metavar='template',
         help='RCon message template to warn users about restart'
     )
     parser.add_argument(
