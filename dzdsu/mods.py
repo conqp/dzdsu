@@ -1,6 +1,7 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
+from hashlib import sha1
 from logging import getLogger
 from pathlib import Path
 from shutil import rmtree
@@ -134,6 +135,12 @@ class InstalledMod(NamedTuple):
     def metadata(self) -> ModMetadata:
         """Returns the mod metadata."""
         return ModMetadata.from_file(self.metadata_file)
+
+    @property
+    def sha1sum(self) -> str:
+        """Returns the SHA-1 checksum."""
+        with self.metadata_file.open('rb') as file:
+            return sha1(file.read()).hexdigest()
 
     @property
     def pbos(self) -> Iterator[Path]:

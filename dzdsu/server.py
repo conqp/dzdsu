@@ -1,6 +1,7 @@
 """Server representation."""
 
 from configparser import SectionProxy
+from hashlib import sha1
 from itertools import chain
 from json import load
 from pathlib import Path
@@ -44,6 +45,20 @@ class Server(NamedTuple):
         )
 
     @property
+    def executable_path(self) -> Path:
+        """Returns the full command for running the server."""
+        if self.executable.is_absolute():
+            return self.executable
+
+        return self.base_dir / self.executable
+
+    @property
+    def sha1sum(self) -> str:
+        """Returns the SHA-1 checksum."""
+        with self.executable_path.open('rb') as file:
+            return sha1(file.read()).hexdigest()
+
+    @property
     def executable_args(self) -> Iterator[str]:
         """Yields arguments for the server executable."""
         yield from self.params.executable_args
@@ -57,10 +72,7 @@ class Server(NamedTuple):
     @property
     def command(self) -> list[str]:
         """Returns the full command for running the server."""
-        if self.executable.is_absolute():
-            return [str(self.executable), *self.executable_args]
-
-        return [str(self.base_dir / self.executable), *self.executable_args]
+        return [str(self.executable_path), *self.executable_args]
 
     @property
     def mods_dir(self) -> Path:
