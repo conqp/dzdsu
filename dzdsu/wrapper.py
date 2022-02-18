@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
 from pathlib import Path
-from subprocess import run
+from subprocess import Popen
 
 from dzdsu.constants import JSON_FILE
 from dzdsu.server import load_servers
@@ -26,6 +26,9 @@ def get_args(description: str = __doc__) -> Namespace:
     parser.add_argument(
         '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
         help='servers JSON file path'
+    )
+    parser.add_argument(
+        '--fork', action='store_true', help='fork server process to background'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging'
@@ -52,4 +55,10 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
-    return run(server.command, cwd=server.base_dir, env=env).returncode
+    proc = Popen(server.command, cwd=server.base_dir, env=env)
+
+    if not args.fork:
+        return proc.wait()
+
+    server.pid = proc.pid
+    return 0
