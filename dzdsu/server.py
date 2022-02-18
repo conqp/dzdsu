@@ -12,6 +12,7 @@ from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
+from dzdsu.hash import hash_changed
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
@@ -141,12 +142,17 @@ class Server(NamedTuple):
         return self.base_dir / '.hashes.json'
 
     @property
-    def hash(self) -> dict[str, str]:
+    def hashes(self) -> dict[str, str]:
         """Returns the server's and its mods' hashes."""
         return {
             'server': self.sha1sum,
             **{str(mod.id): mod.sha1sum for mod in self.used_mods}
         }
+
+    @property
+    def needs_restart(self) -> bool:
+        """Checks whether the server needs a restart."""
+        return hash_changed(self.hashes, self.load_hashes())
 
     def load_hashes(self) -> dict[str, str]:
         """Loads hashes for the server."""
