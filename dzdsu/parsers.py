@@ -1,12 +1,11 @@
 """Config file parsers."""
 
 from configparser import ConfigParser, SectionProxy
-from pathlib import Path
 from re import fullmatch
 from typing import Iterable, Iterator
 
 
-__all__ = ['parse_battleye_cfg', 'parse_server_cfg', 'wine_path']
+__all__ = ['parse_battleye_cfg', 'parse_server_cfg']
 
 
 def parse_battleye_value(key: str, value: str) -> bool | int | str:
@@ -56,12 +55,3 @@ def parse_server_cfg(
     config = ConfigParser()
     config.read_dict({section: dict(server_cfg_to_ini(lines))})
     return config[section]
-
-
-def wine_path(path: Path, *, drive: str = 'Z:') -> str:
-    """Converts a path to a path for Wine."""
-
-    if path.is_absolute():
-        return '\\'.join([drive, *path.parts[1:]])
-
-    return '\\'.join(path.parts)
