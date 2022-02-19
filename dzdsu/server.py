@@ -198,6 +198,11 @@ class Server(NamedTuple):
         """Returns the path to the update lock file."""
         return LockFile(self.base_dir / '.update.lck')
 
+    @property
+    def copy_dir(self) -> Path:
+        """Returns the path to the server copy dir."""
+        return self.base_dir / '.update_copy'
+
     def chdir(self, base_dir: Path) -> Server:
         """Returns a server copy with a changed base dir."""
         return Server(

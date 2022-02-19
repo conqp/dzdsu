@@ -5,7 +5,6 @@ from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
 from os import kill, name
 from pathlib import Path
 from signal import SIGINT
-from tempfile import TemporaryDirectory
 
 from dzdsu.constants import JSON_FILE, SHUTDOWN_MESSAGE
 from dzdsu.hash import hash_changed
@@ -135,9 +134,9 @@ def _update(server: Server, args: Namespace) -> None:
 def needs_update_nt(server: Server, args: Namespace) -> bool:
     """Returns True iff there is an update available."""
 
-    with TemporaryDirectory() as temp_dir:
-        _update(copy := server.chdir(Path(temp_dir)), args)
-        return hash_changed(server.hashes, copy.hashes)
+    server.copy_dir.mkdir(exist_ok=True)
+    _update(copy := server.chdir(server.copy_dir), args)
+    return hash_changed(server.hashes, copy.hashes)
 
 
 def pre_update_shutdown(server: Server, args: Namespace) -> bool:
