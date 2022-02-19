@@ -199,10 +199,10 @@ def main() -> int:
             lambda installed_mod: installed_mod.mod, server.installed_mods
         )))
 
-    if args.needs_restart:
-        return 0 if server.needs_restart else 1
-
     if args.kill:
         kill_if_needs_restart(server, args.message, args.gracetime)
+
+    if args.needs_restart:
+        return 0 if server.needs_restart else 1
 
     return 0
