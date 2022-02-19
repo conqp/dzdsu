@@ -62,8 +62,8 @@ def get_args(description: str = __doc__) -> Namespace:
         help='list installed mods'
     )
     parser.add_argument(
-        '-R', '--kill', action='store_true',
-        help="kill the server if it needs a restart"
+        '-S', '--shutdown', action='store_true',
+        help="shutdown the server if it needs a restart"
     )
     parser.add_argument(
         '--message', default=SHUTDOWN_MESSAGE, metavar='template',
