@@ -27,64 +27,64 @@ def get_args(description: str = __doc__) -> Namespace:
         help='the name of the server to start'
     )
     parser.add_argument(
+        '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
+        help='servers JSON file path'
+    )
+    parser.add_argument(
         '-C', '--clean-mods', action='store_true', help='remove unused mods'
-    )
-    parser.add_argument(
-        '-F', '--fix-paths', action='store_true', help='fix mod file paths'
-    )
-    parser.add_argument(
-        '-I', '--installed-mods', action='store_true',
-        help='list installed mods'
-    )
-    parser.add_argument(
-        '-K', '--install-keys', action='store_true', help='install mod keys'
-    )
-    parser.add_argument(
-        '-M', '--list-mods', action='store_true', help="list the server's mods"
-    )
-    parser.add_argument(
-        '-N', '--needs-restart', action='store_true',
-        help="check whether the server needs a restart"
-    )
-    parser.add_argument(
-        '-R', '--kill', action='store_true',
-        help="kill the server if it needs a restart"
-    )
-    parser.add_argument(
-        '-S', '--list-server-mods', action='store_true',
-        help="list the server's server mods"
     )
     parser.add_argument(
         '-U', '--update', metavar='steam_user',
         help='update server and/or mods'
     )
     parser.add_argument(
-        '-d', '--debug', action='store_true', help='debug logging'
-    )
-    parser.add_argument(
-        '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
-        help='servers JSON file path'
+        '-s', '--update-server', action='store_true', help='update server'
     )
     parser.add_argument(
         '-m', '--update-mods', action='store_true',
         help="update the server's mods"
     )
     parser.add_argument(
-        '-s', '--update-server', action='store_true', help='update server'
+        '-F', '--fix-paths', action='store_true', help='fix mod file paths'
     )
     parser.add_argument(
-        '-t', '--gracetime', type=int, default=120, metavar='seconds',
-        help='grace time to wait before server restart'
+        '-K', '--install-keys', action='store_true', help='install mod keys'
     )
     parser.add_argument(
-        '-v', '--verbose', action='store_true', help='verbose logging output'
+        '--overwrite', action='store_true', help="overwrite existing key files"
+    )
+    parser.add_argument(
+        '-M', '--list-mods', action='store_true', help="list the server's mods"
+    )
+    parser.add_argument(
+        '-S', '--list-server-mods', action='store_true',
+        help="list the server's server mods"
+    )
+    parser.add_argument(
+        '-I', '--installed-mods', action='store_true',
+        help='list installed mods'
+    )
+    parser.add_argument(
+        '-R', '--kill', action='store_true',
+        help="kill the server if it needs a restart"
     )
     parser.add_argument(
         '--message', default=SHUTDOWN_MESSAGE, metavar='template',
         help='RCon message template to warn users about restart'
     )
     parser.add_argument(
-        '--overwrite', action='store_true', help="overwrite existing key files"
+        '-t', '--gracetime', type=int, default=120, metavar='seconds',
+        help='grace time to wait before server restart'
+    )
+    parser.add_argument(
+        '-N', '--needs-restart', action='store_true',
+        help="check whether the server needs a restart"
+    )
+    parser.add_argument(
+        '-v', '--verbose', action='store_true', help='verbose logging output'
+    )
+    parser.add_argument(
+        '-d', '--debug', action='store_true', help='debug logging'
     )
     return parser.parse_args()
 
