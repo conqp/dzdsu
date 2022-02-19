@@ -18,6 +18,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
 from dzdsu.constants import SHUTDOWN_MESSAGE
 from dzdsu.hash import hash_changed
+from dzdsu.lockfile import LockFile
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
@@ -184,6 +185,11 @@ class Server(NamedTuple):
         """Sets the server's PID."""
         with self.pid_file.open('w', encoding='utf-8') as file:
             dump(pid, file)
+
+    @property
+    def update_lockfile(self) -> Path:
+        """Returns the path to the update lock file."""
+        return LockFile(self.base_dir / '.update.lck')
 
     def chdir(self, base_dir: Path) -> Server:
         """Returns a server copy with a changed base dir."""
