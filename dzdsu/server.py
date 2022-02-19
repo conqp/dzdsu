@@ -193,7 +193,7 @@ class Server(NamedTuple):
 
     def chdir(self, base_dir: Path) -> Server:
         """Returns a server copy with a changed base dir."""
-        return type(self)(
+        return Server(
             self.name, self.app_id, base_dir, self.executable,
             self.mods, self.server_mods, self.params
         )
