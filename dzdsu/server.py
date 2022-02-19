@@ -174,26 +174,6 @@ class Server(NamedTuple):
         return hash_changed(self.hashes, self.load_hashes())
 
     @property
-    def pid_file(self) -> Path:
-        """Returns the path to the PID file."""
-        return self.base_dir / '.pidfile'
-
-    @property
-    def pid(self) -> int | None:
-        """Reads the server's PID."""
-        try:
-            with self.pid_file.open('rb') as file:
-                return load(file)
-        except FileNotFoundError:
-            return None
-
-    @pid.setter
-    def pid(self, pid: int) -> None:
-        """Sets the server's PID."""
-        with self.pid_file.open('w', encoding='utf-8') as file:
-            dump(pid, file)
-
-    @property
     def update_lockfile(self) -> LockFile:
         """Returns the path to the update lock file."""
         return LockFile(self.base_dir / '.update.lck', reason='Server update.')
@@ -232,25 +212,25 @@ class Server(NamedTuple):
             timeout=timeout
         )
 
-    def _notify_shutdown(self, template: str, grace_time: int) -> None:
+    def _notify_countdown(self, template: str, countdown: int) -> None:
         """Notify users about shutdown."""
         with self.rcon(timeout=1) as rcon:
-            for passed in range(grace_time):
-                rcon.run(f'say -1 {template.format(grace_time - passed)}')
+            for passed in range(countdown):
+                rcon.run(f'say -1 {template.format(countdown - passed)}')
                 sleep(1)
                 rcon.login(rcon.passwd)
 
-    def notify_shutdown(
+    def notify_countdown(
             self,
             template: str = SHUTDOWN_MESSAGE,
-            grace_time: int = 120
+            countdown: int = 120
     ) -> bool:
-        """Notify users about shutdown."""
-        if grace_time <= 0:
+        """Notify users with a countdown."""
+        if countdown <= 0:
             return True
 
         try:
-            self._notify_shutdown(template, grace_time)
+            self._notify_countdown(template, countdown)
         except (ConnectionRefusedError, TimeoutError):
             return False
 
@@ -266,6 +246,11 @@ class Server(NamedTuple):
         with self.rcon(timeout=1) as rcon:
             for player in range(self.config.getint('maxPlayers')):
                 rcon.run(f'kick {player} {reason}')
+
+    def shutdown(self) -> None:
+        """Shutdown the server."""
+        with self.rcon(timeout=1) as rcon:
+            rcon.run(f'shutdown')
 
 
 def load_servers_json(file: Path) -> dict[str, Any]:

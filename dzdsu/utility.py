@@ -2,9 +2,8 @@
 
 from argparse import ArgumentParser, Namespace
 from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
-from os import kill, name
+from os import name
 from pathlib import Path
-from signal import SIGINT
 
 from dzdsu.constants import JSON_FILE, SHUTDOWN_MESSAGE
 from dzdsu.hash import hash_changed
@@ -75,8 +74,8 @@ def get_args(description: str = __doc__) -> Namespace:
         help='RCon message template for messages to users'
     )
     parser.add_argument(
-        '-t', '--gracetime', type=int, default=120, metavar='seconds',
-        help='grace time to wait before server shutdown'
+        '-t', '--countdown', type=int, default=120, metavar='seconds',
+        help='countdown time'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging'
@@ -146,6 +145,8 @@ def pre_update_shutdown(server: Server, args: Namespace) -> bool:
         LOGGER.info('No update required.')
         return False
 
+    LOGGER.info('Updates detected. Notifying users.')
+
     if not shutdown(server, args):
         LOGGER.warning('Could not shutdown server prior to update.')
         return False
@@ -167,26 +168,14 @@ def update(server: Server, args: Namespace) -> None:
 def shutdown(server: Server, args: Namespace) -> bool:
     """Shut down the server iff it needs a restart."""
 
-    if (pid := server.pid) is None:
-        LOGGER.error('No PID found for server.')
-        return False
-
-    LOGGER.info('Updates detected. Notifying users.')
-
-    if not server.notify_shutdown(args.message, grace_time=args.gracetime):
+    if not server.notify_countdown(args.message, countdown=args.countdown):
         LOGGER.error('Could not notify users about shutdown.')
         return False
 
     LOGGER.info(f'Kicking remaining users.')
     server.kick_all('Server restart.')
     LOGGER.info(f'Stopping server.')
-
-    try:
-        kill(pid, SIGINT)
-    except ProcessLookupError:
-        LOGGER.error('Could not find process with PID: %i', pid)
-        return False
-
+    server.shutdown()
     return True
 
 

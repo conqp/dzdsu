@@ -29,10 +29,6 @@ def get_args(description: str = __doc__) -> Namespace:
         help='fork server process to background'
     )
     parser.add_argument(
-        '-p', '--store-pid', action='store_true',
-        help="store the process' PID in its PID file"
-    )
-    parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging'
     )
     parser.add_argument(
@@ -63,9 +59,6 @@ def main() -> int:
 
     server.update_hashes()
     proc = Popen(server.command, cwd=server.base_dir, env=env)
-
-    if args.store_pid:
-        server.pid = proc.pid
 
     if args.fork:
         return 0
