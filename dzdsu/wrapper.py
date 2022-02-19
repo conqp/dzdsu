@@ -57,6 +57,10 @@ def main() -> int:
         LOGGER.error('No such server: %s', args.server)
         return 2
 
+    if server.update_lockfile.exists():
+        LOGGER.error('Server is currently updating.')
+        return 3
+
     server.update_hashes()
     proc = Popen(server.command, cwd=server.base_dir, env=env)
 
