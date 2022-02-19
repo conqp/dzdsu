@@ -1,5 +1,6 @@
 """Server representation."""
 
+from __future__ import annotations
 from configparser import SectionProxy
 from hashlib import sha1
 from itertools import chain
@@ -183,6 +184,13 @@ class Server(NamedTuple):
         """Sets the server's PID."""
         with self.pid_file.open('w', encoding='utf-8') as file:
             dump(pid, file)
+
+    def chdir(self, base_dir: Path) -> Server:
+        """Returns a server copy with a changed base dir."""
+        return type(self)(
+            self.name, self.app_id, base_dir, self.executable,
+            self.mods, self.server_mods, self.params
+        )
 
     def update_hashes(self) -> None:
         """Updates the hashes file."""
