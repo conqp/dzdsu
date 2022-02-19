@@ -117,11 +117,26 @@ def fix_mod_paths(server: Server) -> None:
         installed_mod.fix_paths()
 
 
+def _update(server: Server, args: Namespace) -> None:
+    """Perform server and mod updates."""
+
+    updater = Updater(server, args.update)
+
+    if args.update_server:
+        updater.update_server()
+
+    if args.update_mods:
+        updater.update_mods()
+
+    with server.update_lockfile:
+        updater()
+
+
 def needs_update_nt(server: Server, args: Namespace) -> bool:
     """Returns True iff there is an update available."""
 
     with TemporaryDirectory() as temp_dir:
-        update(copy := server.chdir(Path(temp_dir)), args)
+        _update(copy := server.chdir(Path(temp_dir)), args)
         return hash_changed(server.hashes, copy.hashes)
 
 
@@ -140,23 +155,14 @@ def pre_update_shutdown(server: Server, args: Namespace) -> bool:
 
 
 def update(server: Server, args: Namespace) -> None:
-    """Perform server and mod updates."""
-
-    updater = Updater(server, args.update)
-
-    if args.update_server:
-        updater.update_server()
-
-    if args.update_mods:
-        updater.update_mods()
+    """Updates the server."""
 
     # Windows systems cannot override files that are in use by a process.
     # So we need to shut the server down *before* the update.
     if name == 'nt' and not pre_update_shutdown(server, args):
         return
 
-    with server.update_lockfile:
-        updater()
+    _update(server, args)
 
 
 def shutdown(server: Server, args: Namespace) -> int:
