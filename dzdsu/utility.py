@@ -2,11 +2,13 @@
 
 from argparse import ArgumentParser, Namespace
 from logging import DEBUG, INFO, WARNING, basicConfig, getLogger
-from os import kill
+from os import kill, name
 from pathlib import Path
 from signal import SIGINT
+from tempfile import TemporaryDirectory
 
 from dzdsu.constants import JSON_FILE, SHUTDOWN_MESSAGE
+from dzdsu.hash import hash_changed
 from dzdsu.mods import print_mods
 from dzdsu.server import Server, load_servers
 from dzdsu.update import Updater
@@ -66,16 +68,16 @@ def get_args(description: str = __doc__) -> Namespace:
         help="shutdown the server if it needs a restart"
     )
     parser.add_argument(
+        '-N', '--needs-restart', action='store_true',
+        help="check whether the server needs a restart"
+    )
+    parser.add_argument(
         '--message', default=SHUTDOWN_MESSAGE, metavar='template',
-        help='RCon message template to warn users about restart'
+        help='RCon message template for messages to users'
     )
     parser.add_argument(
         '-t', '--gracetime', type=int, default=120, metavar='seconds',
-        help='grace time to wait before server restart'
-    )
-    parser.add_argument(
-        '-N', '--needs-restart', action='store_true',
-        help="check whether the server needs a restart"
+        help='grace time to wait before server shutdown'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose logging'
@@ -115,6 +117,28 @@ def fix_mod_paths(server: Server) -> None:
         installed_mod.fix_paths()
 
 
+def needs_update_nt(server: Server, args: Namespace) -> bool:
+    """Returns True iff there is an update available."""
+
+    with TemporaryDirectory() as temp_dir:
+        update(copy := server.chdir(Path(temp_dir)), args)
+        return hash_changed(server.hashes, copy.hashes)
+
+
+def pre_update_shutdown(server: Server, args: Namespace) -> bool:
+    """Conditionally shutdown server before update."""
+
+    if not needs_update_nt(server, args):
+        LOGGER.info('No update required.')
+        return False
+
+    if not shutdown(server, args):
+        LOGGER.warning('Could not shutdown server prior to update.')
+        return False
+
+    return True
+
+
 def update(server: Server, args: Namespace) -> None:
     """Perform server and mod updates."""
 
@@ -126,27 +150,27 @@ def update(server: Server, args: Namespace) -> None:
     if args.update_mods:
         updater.update_mods()
 
-    updater()
+    # Windows systems cannot override files that are in use by a process.
+    # So we need to shut the server down *before* the update.
+    if name == 'nt' and not pre_update_shutdown(server, args):
+        return
+
+    with server.update_lockfile:
+        updater()
 
 
-def shutdown_if_needs_restart(
-        server: Server, message: str, grace_time: int
-) -> None:
+def shutdown(server: Server, args: Namespace) -> int:
     """Shut down the server iff it needs a restart."""
 
     if (pid := server.pid) is None:
         LOGGER.error('No PID found for server.')
-        return
-
-    if not server.needs_restart:
-        LOGGER.info('Everything up-to-date. No restart required.')
-        return
+        return 2
 
     LOGGER.info('Updates detected. Notifying users.')
 
-    if not server.notify_shutdown(message, grace_time=grace_time):
+    if not server.notify_shutdown(args.message, grace_time=args.grace_time):
         LOGGER.error('Could not notify users about shutdown.')
-        return
+        return 3
 
     LOGGER.info(f'Kicking remaining users.')
     server.kick_all('Server restart.')
@@ -156,6 +180,9 @@ def shutdown_if_needs_restart(
         kill(pid, SIGINT)
     except ProcessLookupError:
         LOGGER.error('Could not find process with PID: %i', pid)
+        return 4
+
+    return 0
 
 
 def main() -> int:
@@ -197,7 +224,7 @@ def main() -> int:
         )))
 
     if args.shutdown:
-        shutdown_if_needs_restart(server, args.message, args.gracetime)
+        return shutdown(server, args)
 
     if args.needs_restart:
         return 0 if server.needs_restart else 1
