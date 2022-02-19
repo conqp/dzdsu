@@ -6,22 +6,19 @@ from hashlib import sha1
 from itertools import chain
 from json import dump, load
 from pathlib import Path
-from time import sleep
 from typing import Any, Iterator, NamedTuple
-
-from rcon.battleye import Client
 
 from dzdsu.constants import BATTLEYE_GLOB
 from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
-from dzdsu.constants import SHUTDOWN_MESSAGE
 from dzdsu.hash import hash_changed
 from dzdsu.lockfile import LockFile
 from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
+from dzdsu.rcon import Client
 
 
 __all__ = ['Server', 'load_servers']
@@ -212,45 +209,34 @@ class Server(NamedTuple):
             timeout=timeout
         )
 
-    def _notify_countdown(self, template: str, countdown: int) -> None:
-        """Notify users about shutdown."""
-        with self.rcon(timeout=1) as rcon:
-            for passed in range(countdown):
-                rcon.run(f'say -1 {template.format(countdown - passed)}')
-                sleep(1)
-                rcon.login(rcon.passwd)
-
-    def notify_countdown(
-            self,
-            template: str = SHUTDOWN_MESSAGE,
-            countdown: int = 120
-    ) -> bool:
+    def countdown(self, template: str, countdown: int = 120) -> bool:
         """Notify users with a countdown."""
         if countdown <= 0:
             return True
 
         try:
-            self._notify_countdown(template, countdown)
+            with self.rcon() as rcon:
+                rcon.countdown(template, countdown)
         except (ConnectionRefusedError, TimeoutError):
             return False
 
         return True
 
-    def kick(self, player: int, reason: str) -> None:
+    def kick(self, player: int | str, reason: str | None = None) -> None:
         """Kicks the respective player."""
         with self.rcon(timeout=1) as rcon:
-            rcon.run(f'kick {player} {reason}')
+            rcon.kick(player, reason=reason)
 
-    def kick_all(self, reason: str) -> None:
+    def kick_all(self, reason: str | None = None) -> None:
         """Kick all players."""
         with self.rcon(timeout=1) as rcon:
             for player in range(self.config.getint('maxPlayers')):
-                rcon.run(f'kick {player} {reason}')
+                rcon.kick(player, reason=reason)
 
     def shutdown(self) -> None:
         """Shutdown the server."""
         with self.rcon(timeout=1) as rcon:
-            rcon.run(f'shutdown')
+            rcon.shutdown()
 
 
 def load_servers_json(file: Path) -> dict[str, Any]:

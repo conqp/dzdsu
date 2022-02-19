@@ -168,7 +168,7 @@ def update(server: Server, args: Namespace) -> None:
 def shutdown(server: Server, args: Namespace) -> bool:
     """Shut down the server iff it needs a restart."""
 
-    if not server.notify_countdown(args.message, countdown=args.countdown):
+    if not server.countdown(args.message, countdown=args.countdown):
         LOGGER.error('Could not notify users about shutdown.')
         return False
 
