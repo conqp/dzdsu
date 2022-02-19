@@ -164,18 +164,18 @@ def update(server: Server, args: Namespace) -> None:
     _update(server, args)
 
 
-def shutdown(server: Server, args: Namespace) -> int:
+def shutdown(server: Server, args: Namespace) -> bool:
     """Shut down the server iff it needs a restart."""
 
     if (pid := server.pid) is None:
         LOGGER.error('No PID found for server.')
-        return 2
+        return False
 
     LOGGER.info('Updates detected. Notifying users.')
 
-    if not server.notify_shutdown(args.message, grace_time=args.grace_time):
+    if not server.notify_shutdown(args.message, grace_time=args.gracetime):
         LOGGER.error('Could not notify users about shutdown.')
-        return 3
+        return False
 
     LOGGER.info(f'Kicking remaining users.')
     server.kick_all('Server restart.')
@@ -185,9 +185,9 @@ def shutdown(server: Server, args: Namespace) -> int:
         kill(pid, SIGINT)
     except ProcessLookupError:
         LOGGER.error('Could not find process with PID: %i', pid)
-        return 4
+        return False
 
-    return 0
+    return True
 
 
 def main() -> int:
@@ -229,7 +229,7 @@ def main() -> int:
         )))
 
     if args.shutdown:
-        return shutdown(server, args)
+        return 0 if shutdown(server, args) else 1
 
     if args.needs_restart:
         return 0 if server.needs_restart else 1
