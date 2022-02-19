@@ -254,6 +254,8 @@ class Server(NamedTuple):
         except (ConnectionRefusedError, TimeoutError):
             return False
 
+        return True
+
     def kick(self, player: int, reason: str) -> None:
         """Kicks the respective player."""
         with self.rcon(timeout=1) as rcon:
