@@ -41,7 +41,7 @@ class Updater:
 
     def update_mods(self) -> Updater:
         """Updates the server's mods."""
-        for mod in self.server.used_mods:
+        for mod in self.server.enabled_mods:
             self.commands += [
                 '+workshop_download_item', str(DAYZ_APP_ID), str(mod.id),
                 'validate'

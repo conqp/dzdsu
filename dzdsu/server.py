@@ -131,6 +131,13 @@ class Server(NamedTuple):
             yield InstalledMod(meta.publishedid, self.base_dir)
 
     @property
+    def enabled_mods(self) -> set[Mod]:
+        """Yields enabled mods."""
+        return {
+            mod for mod in chain(self.mods, self.server_mods) if mod.enabled
+        }
+
+    @property
     def used_mods(self) -> Iterator[InstalledMod]:
         """Yields used mods."""
         used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
