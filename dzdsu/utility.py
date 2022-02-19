@@ -78,7 +78,7 @@ def get_args(description: str = __doc__) -> Namespace:
         help="check whether the server needs a restart"
     )
     parser.add_argument(
-        '-v', '--verbose', action='store_true', help='verbose logging output'
+        '-v', '--verbose', action='store_true', help='verbose logging'
     )
     parser.add_argument(
         '-d', '--debug', action='store_true', help='debug logging'
