@@ -187,7 +187,7 @@ class Server(NamedTuple):
             dump(pid, file)
 
     @property
-    def update_lockfile(self) -> Path:
+    def update_lockfile(self) -> LockFile:
         """Returns the path to the update lock file."""
         return LockFile(self.base_dir / '.update.lck')
 
