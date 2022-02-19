@@ -201,7 +201,7 @@ def main() -> int:
         )))
 
     if args.needs_restart:
-        return 1 if server.needs_restart else None
+        return 0 if server.needs_restart else 1
 
     if args.kill:
         kill_if_needs_restart(server, args.message, args.gracetime)
