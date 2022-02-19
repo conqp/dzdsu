@@ -196,8 +196,7 @@ def main() -> int:
 
     if args.installed_mods:
         print_mods(sorted(map(
-            lambda installed_mod: installed_mod.mod,
-            server.installed_mods
+            lambda installed_mod: installed_mod.mod, server.installed_mods
         )))
 
     if args.needs_restart:
