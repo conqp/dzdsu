@@ -129,10 +129,10 @@ def update(server: Server, args: Namespace) -> None:
     updater()
 
 
-def kill_if_needs_restart(
+def shutdown_if_needs_restart(
         server: Server, message: str, grace_time: int
 ) -> None:
-    """Kill the server iff it needs a restart."""
+    """Shut down the server iff it needs a restart."""
 
     if (pid := server.pid) is None:
         LOGGER.error('No PID found for server.')
@@ -196,8 +196,8 @@ def main() -> int:
             lambda installed_mod: installed_mod.mod, server.installed_mods
         )))
 
-    if args.kill:
-        kill_if_needs_restart(server, args.message, args.gracetime)
+    if args.shutdown:
+        shutdown_if_needs_restart(server, args.message, args.gracetime)
 
     if args.needs_restart:
         return 0 if server.needs_restart else 1
