@@ -18,6 +18,7 @@ __all__ = [
     'MODS_DIR',
     'SERVER_EXECUTABLE',
     'STEAMCMD',
+    'UNSUPPORTED_OS',
     'WORKSHOP_URL'
 ]
 
@@ -30,6 +31,7 @@ MESSAGE_TEMPLATE_SHUTDOWN = 'Server is going down for maintenance in {}!'
 MESSAGE_TEMPLATE_UPDATE = 'Server is going down for updates in {}!'
 MODS_BASE_DIR = Path('steamapps/workshop/content/')
 MODS_DIR = MODS_BASE_DIR / str(DAYZ_APP_ID)
+UNSUPPORTED_OS = OSError('Unsupported operating system.')
 STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
 
@@ -43,4 +45,4 @@ elif name == 'posix':
     JSON_FILE = Path('/etc/dzservers.json')
     SERVER_EXECUTABLE = 'DayZServer'
 else:
-    raise OSError('Unsupported operating system.')
+    raise UNSUPPORTED_OS

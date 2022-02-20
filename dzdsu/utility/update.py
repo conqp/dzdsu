@@ -4,7 +4,7 @@ from argparse import Namespace
 from os import name
 from shutil import copytree
 
-from dzdsu.constants import MESSAGE_TEMPLATE_UPDATE
+from dzdsu.constants import MESSAGE_TEMPLATE_UPDATE, UNSUPPORTED_OS
 from dzdsu.hash import hash_changed
 from dzdsu.server import Server
 from dzdsu.update import Updater
@@ -17,16 +17,14 @@ __all__ = ['update']
 
 def update(server: Server, args: Namespace) -> None:
     """Updates the server."""
+
     if name == 'nt':
         return _update_nt(server, args)
 
-    return _update_posix(server, args)
+    if name == 'posix':
+        return _update(server, args)
 
-
-def _update_posix(server: Server, args: Namespace) -> None:
-    """Update POSIX systems."""
-
-    return _update(server, args)
+    raise UNSUPPORTED_OS
 
 
 def _update_nt(server: Server, args: Namespace) -> None:
