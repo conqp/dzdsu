@@ -23,14 +23,15 @@ def fix_mod_paths(server: Server) -> None:
         installed_mod.fix_paths()
 
 
-def install_keys(server: Server) -> None:
+def install_keys(server: Server, *, overwrite: bool = False) -> None:
     """Installs the keys for all mods of the server."""
 
     for installed_mod in server.installed_mods:
         for key in installed_mod.bikeys:
             if (installed := server.base_dir / 'keys' / key.name).exists():
-                LOGGER.debug('Key "%s" already installed.', key.name)
-                continue
+                if not overwrite:
+                    LOGGER.debug('Key "%s" already installed.', key.name)
+                    continue
 
             with key.open('rb') as src, installed.open('wb') as dst:
                 dst.write(src.read())

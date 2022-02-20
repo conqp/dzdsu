@@ -38,7 +38,7 @@ def main() -> int:
         fix_mod_paths(server)
 
     if args.install_keys:
-        install_keys(server)
+        install_keys(server, overwrite=args.overwrite)
 
     if args.list_mods:
         print_mods(server.mods)
