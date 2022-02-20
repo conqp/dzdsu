@@ -11,10 +11,13 @@ setup(
     author_email='mail@richard-neumann.de',
     install_requires=['rcon'],
     python_requires='>=3.10',
-    packages=['dzdsu'],
+    packages=[
+        'dzdsu',
+        'dzdsu.main'
+    ],
     entry_points={
         'console_scripts': [
-            'dzdsu = dzdsu.utility:main',
+            'dzdsu = dzdsu.utility.main:main',
             'dzdsw = dzdsu.wrapper:main'
         ]
     },
