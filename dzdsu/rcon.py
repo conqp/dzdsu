@@ -33,4 +33,4 @@ class Client(battleye.Client):
 
     def shutdown(self) -> str:
         """Shutdown the server."""
-        return self.run(f'#shutdown')
+        return self.run('#shutdown')
