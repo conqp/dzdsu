@@ -13,7 +13,7 @@ setup(
     python_requires='>=3.10',
     packages=[
         'dzdsu',
-        'dzdsu.main'
+        'dzdsu.utility'
     ],
     entry_points={
         'console_scripts': [
