@@ -61,7 +61,7 @@ def get_args(description: str) -> Namespace:
         help="check whether the server needs a restart"
     )
     parser.add_argument(
-        '-s', '--message', metavar='template',
+        '-e', '--message', metavar='template',
         help='RCon countdown message template'
     )
     parser.add_argument(
