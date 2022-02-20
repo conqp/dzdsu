@@ -217,7 +217,7 @@ class Server(NamedTuple):
         try:
             with self.rcon() as rcon:
                 rcon.countdown(template, countdown)
-        except (ConnectionRefusedError, TimeoutError):
+        except (ConnectionRefusedError, TimeoutError, ConnectionResetError):
             return False
 
         return True
