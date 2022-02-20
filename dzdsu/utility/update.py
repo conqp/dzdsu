@@ -82,3 +82,5 @@ def _update(server: Server, args: Namespace) -> None:
 
     with server.update_lockfile:
         updater()
+
+    print()
