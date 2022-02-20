@@ -14,8 +14,8 @@ def shutdown(server: Server, message: str, countdown: int) -> bool:
         LOGGER.error('Could not notify users about shutdown.')
         return False
 
-    LOGGER.info(f'Kicking remaining users.')
+    LOGGER.info('Kicking remaining users.')
     server.kick_all('Server restart.')
-    LOGGER.info(f'Stopping server.')
+    LOGGER.info('Stopping server.')
     server.shutdown()
     return True
