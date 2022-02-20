@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'dzdsu = dzdsu.utility.main:main',
+            'dzdsu = dzdsu.utility:main',
             'dzdsw = dzdsu.wrapper:main'
         ]
     },

@@ -2,7 +2,9 @@
 
 from argparse import Namespace
 from os import name
+from shutil import copytree
 
+from dzdsu.constants import MESSAGE_TEMPLATE_UPDATE
 from dzdsu.hash import hash_changed
 from dzdsu.server import Server
 from dzdsu.update import Updater
@@ -15,13 +17,33 @@ __all__ = ['update']
 
 def update(server: Server, args: Namespace) -> None:
     """Updates the server."""
+    if name == 'nt':
+        return _update_nt(server, args)
+
+    return _update_posix(server, args)
+
+
+def _update_posix(server: Server, args: Namespace) -> None:
+    """Update POSIX systems."""
+
+    return _update(server, args)
+
+
+def _update_nt(server: Server, args: Namespace) -> None:
+    """Update NT systems."""
 
     # Windows systems cannot override files that are in use by a process.
     # So we need to shut the server down *before* the update.
-    if name == 'nt' and not _nt_pre_update_shutdown(server, args):
+    if not _nt_pre_update_shutdown(server, args):
         return
 
-    _update(server, args)
+    # Iff an update was available, it is already installed in the server's
+    # update copy. So we just need to copy it to the actual server.
+    copytree(
+        server.chdir(server.copy_dir).base_dir,
+        server.base_dir,
+        dirs_exist_ok=True
+    )
 
 
 def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
@@ -33,7 +55,11 @@ def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
 
     LOGGER.info('Updates detected. Notifying users.')
 
-    if not shutdown(server, args):
+    if not shutdown(
+            server,
+            args.message or MESSAGE_TEMPLATE_UPDATE,
+            args.countdown
+    ):
         LOGGER.warning('Could not shutdown server prior to update.')
         return False
 
@@ -44,7 +70,7 @@ def _nt_needs_update(server: Server, args: Namespace) -> bool:
     """Returns True iff there is an update available on an NT platform."""
 
     # Since we cannot update the server on NT while it is running,
-    # we need to install a copy of the server.
+    # we need to install a copy of the server and all its mods.
     # Then we can compare the copy's hashes to the running server's hashes
     # to check whether an update is available.
     server.copy_dir.mkdir(exist_ok=True)
