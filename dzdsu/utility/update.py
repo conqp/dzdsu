@@ -58,7 +58,7 @@ def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
             args.message or MESSAGE_TEMPLATE_UPDATE,
             args.countdown
     ):
-        LOGGER.warning('Could not shutdown server prior to update.')
+        LOGGER.error('Could not shutdown server prior to update.')
         return False
 
     return True

@@ -19,9 +19,7 @@ def main() -> int:
     """Server management utility."""
 
     args = get_args(__doc__)
-    basicConfig(
-        level=DEBUG if args.debug else INFO if args.verbose else WARNING
-    )
+    basicConfig(level=DEBUG if args.debug else WARNING if args.quiet else INFO)
     servers = load_servers(args.servers_file)
 
     try:

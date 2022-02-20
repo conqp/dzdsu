@@ -69,9 +69,9 @@ def get_args(description: str) -> Namespace:
         help='countdown time'
     )
     parser.add_argument(
-        '-v', '--verbose', action='store_true', help='verbose logging'
+        '-d', '--debug', action='store_true', help='show debug messages'
     )
     parser.add_argument(
-        '-d', '--debug', action='store_true', help='debug logging'
+        '-q', '--quiet', action='store_true', help='suppress info messages'
     )
     return parser.parse_args()

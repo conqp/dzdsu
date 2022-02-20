@@ -29,10 +29,10 @@ def get_args(description: str = __doc__) -> Namespace:
         help='fork server process to background'
     )
     parser.add_argument(
-        '-v', '--verbose', action='store_true', help='verbose logging'
+        '-d', '--debug', action='store_true', help='show debug messages'
     )
     parser.add_argument(
-        '-d', '--debug', action='store_true', help='debug logging'
+        '-q', '--quiet', action='store_true', help='suppress info messages'
     )
     return parser.parse_args()
 
@@ -41,9 +41,7 @@ def main() -> int:
     """Starts the DayZ server."""
 
     args = get_args()
-    basicConfig(
-        level=DEBUG if args.debug else INFO if args.verbose else WARNING
-    )
+    basicConfig(level=DEBUG if args.debug else WARNING if args.quiet else INFO)
     servers = load_servers(args.servers_file)
     env = None
 
