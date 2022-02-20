@@ -2,7 +2,6 @@
 
 from argparse import Namespace
 from os import name
-from shutil import copytree
 
 from dzdsu.constants import MESSAGE_TEMPLATE_UPDATE, UNSUPPORTED_OS
 from dzdsu.hash import hash_changed
@@ -35,13 +34,7 @@ def _update_nt(server: Server, args: Namespace) -> None:
     if not _nt_pre_update_shutdown(server, args):
         return
 
-    # Iff an update was available, it is already installed in the server's
-    # update copy. So we just need to copy it to the actual server.
-    copytree(
-        server.chdir(server.copy_dir).base_dir,
-        server.base_dir,
-        dirs_exist_ok=True
-    )
+    _update(server, args)
 
 
 def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
