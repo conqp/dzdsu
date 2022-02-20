@@ -15,7 +15,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
 from dzdsu.hash import hash_changed
 from dzdsu.lockfile import LockFile
-from dzdsu.mods import Mod, ModMetadata, InstalledMod, mods_str
+from dzdsu.mods import Mod, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
 from dzdsu.rcon import Client
@@ -105,10 +105,26 @@ class Server(NamedTuple):
             return dict(parse_battleye_cfg(file))
 
     @property
-    def installed_mods_metadata(self) -> Iterator[ModMetadata]:
-        """Yields metadata of installed mods."""
-        for filename in self.mods_dir.glob('*/meta.cpp'):
-            yield ModMetadata.from_file(filename)
+    def installed_mods(self) -> Iterator[InstalledMod]:
+        """Yields installed mods."""
+        mods = {mod.id: mod for mod in chain(self.mods, self.server_mods)}
+
+        for directory in self.mods_dir.glob('*'):
+            if not directory.is_dir():
+                continue
+
+            try:
+                ident = int(directory.name)
+            except ValueError:
+                continue
+
+            try:
+                mod = mods[ident]
+            except KeyError:
+                yield InstalledMod(Mod(ident, None, False), self.base_dir)
+
+            else:
+                yield InstalledMod(mod, self.base_dir)
 
     @property
     def config_file(self) -> Path:
@@ -122,12 +138,6 @@ class Server(NamedTuple):
             return parse_server_cfg(file)
 
     @property
-    def installed_mods(self) -> Iterator[InstalledMod]:
-        """Yields installed mods."""
-        for meta in self.installed_mods_metadata:
-            yield InstalledMod(meta.publishedid, self.base_dir)
-
-    @property
     def enabled_mods(self) -> set[Mod]:
         """Yields enabled mods."""
         return {
@@ -139,18 +149,18 @@ class Server(NamedTuple):
         """Yields used mods."""
         used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
 
-        for meta in self.installed_mods_metadata:
-            if meta.publishedid in used_ids:
-                yield InstalledMod(meta.publishedid, self.base_dir)
+        for installed_mod in self.installed_mods:
+            if installed_mod.mod.id in used_ids:
+                yield installed_mod
 
     @property
     def unused_mods(self) -> Iterator[InstalledMod]:
         """Yields unused mods."""
         used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
 
-        for meta in self.installed_mods_metadata:
-            if meta.publishedid not in used_ids:
-                yield InstalledMod(meta.publishedid, self.base_dir)
+        for installed_mod in self.installed_mods:
+            if installed_mod.mod.id not in used_ids:
+                yield installed_mod
 
     @property
     def hashes_file(self) -> Path:
@@ -162,7 +172,10 @@ class Server(NamedTuple):
         """Returns the server's and its mods' hashes."""
         return {
             'server': self.sha1sum,
-            **{str(mod.id): mod.sha1sum for mod in self.used_mods}
+            **{
+                str(installed_mod.mod.id): installed_mod.sha1sum
+                for installed_mod in self.used_mods
+            }
         }
 
     @property

@@ -13,7 +13,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'ModMetadata', 'InstalledMod', 'mods_str', 'print_mods']
+__all__ = ['Mod', 'InstalledMod', 'mods_str', 'print_mods']
 
 
 class Mod(NamedTuple):
@@ -64,57 +64,16 @@ class Mod(NamedTuple):
         return WORKSHOP_URL.format(self.id)
 
 
-class ModMetadata(NamedTuple):
-    """Metadata of a mod."""
-
-    protocol: int
-    publishedid: int
-    name: str
-    timestamp: int
-
-    @classmethod
-    def from_dict(cls, dct: dict) -> ModMetadata:
-        """Creates mod metadata from the given dict."""
-        return cls(
-            int(dct['protocol']),
-            int(dct['publishedid']),
-            dct['name'].strip('"'),
-            int(dct['timestamp'])
-        )
-
-    @classmethod
-    def from_lines(cls, lines: Iterable[str]) -> ModMetadata:
-        """Creates mod metadata from the given lines."""
-        return cls.from_dict({
-            key: value.rstrip(';') for key, value in (
-                line.split(' = ') for line in (
-                    line.strip() for line in lines
-                ) if line
-            )
-        })
-
-    @classmethod
-    def from_file(cls, filename: Path) -> ModMetadata:
-        """Reads the mod metadata from the given file."""
-        with filename.open('r', encoding='utf-8') as file:
-            return cls.from_lines(file)
-
-
 class InstalledMod(NamedTuple):
     """Represents an installed mod."""
 
-    id: int
+    mod: Mod
     base_dir: Path
-
-    @property
-    def mod(self) -> Mod:
-        """Returns a Mod object."""
-        return Mod(self.id, self.metadata.name)
 
     @property
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
-        return self.base_dir / MODS_DIR / str(self.id)
+        return self.base_dir / MODS_DIR / str(self.mod.id)
 
     @property
     def addons(self) -> Path:
@@ -127,19 +86,14 @@ class InstalledMod(NamedTuple):
         return self.path / 'keys'
 
     @property
-    def metadata_file(self) -> Path:
+    def metadata(self) -> Path:
         """Returns the path to the metadata file."""
         return self.path / 'meta.cpp'
 
     @property
-    def metadata(self) -> ModMetadata:
-        """Returns the mod metadata."""
-        return ModMetadata.from_file(self.metadata_file)
-
-    @property
     def sha1sum(self) -> str:
         """Returns the SHA-1 checksum."""
-        with self.metadata_file.open('rb') as file:
+        with self.metadata.open('rb') as file:
             return sha1(file.read()).hexdigest()
 
     @property
