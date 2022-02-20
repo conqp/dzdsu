@@ -209,18 +209,13 @@ class Server(NamedTuple):
             timeout=timeout
         )
 
-    def countdown(self, template: str, countdown: int = 120) -> bool:
+    def countdown(self, template: str, countdown: int = 120) -> None:
         """Notify users with a countdown."""
         if countdown <= 0:
-            return True
+            return
 
-        try:
-            with self.rcon() as rcon:
-                rcon.countdown(template, countdown)
-        except (ConnectionRefusedError, TimeoutError, ConnectionResetError):
-            return False
-
-        return True
+        with self.rcon() as rcon:
+            rcon.countdown(template, countdown)
 
     def kick(self, player: int | str, reason: str | None = None) -> None:
         """Kicks the respective player."""
