@@ -200,7 +200,7 @@ class Server(NamedTuple):
         except FileNotFoundError:
             return {}
 
-    def rcon(self, timeout: float | None = None):
+    def rcon(self, timeout: float | None = 1.0):
         """Returns an RCon client."""
         return Client(
             (config := self.battleye_cfg).get('RConIP', '127.0.0.1'),
@@ -219,18 +219,18 @@ class Server(NamedTuple):
 
     def kick(self, player: int | str, reason: str | None = None) -> None:
         """Kicks the respective player."""
-        with self.rcon(timeout=1) as rcon:
+        with self.rcon() as rcon:
             rcon.kick(player, reason=reason)
 
     def kick_all(self, reason: str | None = None) -> None:
         """Kick all players."""
-        with self.rcon(timeout=1) as rcon:
+        with self.rcon() as rcon:
             for player in range(self.config.getint('maxPlayers')):
                 rcon.kick(player, reason=reason)
 
     def shutdown(self) -> None:
         """Shutdown the server."""
-        with self.rcon(timeout=1) as rcon:
+        with self.rcon() as rcon:
             rcon.shutdown()
 
 
