@@ -15,6 +15,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import SERVER_EXECUTABLE
 from dzdsu.hash import hash_changed
 from dzdsu.lockfile import LockFile
+from dzdsu.mission import Mission
 from dzdsu.mods import Mod, InstalledMod, mods_str
 from dzdsu.params import ServerParams
 from dzdsu.parsers import parse_battleye_cfg, parse_server_cfg
@@ -145,6 +146,11 @@ class Server(NamedTuple):
         }
 
     @property
+    def mpmissions(self) -> Path:
+        """Returns the path to the missions folders."""
+        return self.base_dir / 'mpmissions'
+
+    @property
     def used_mods(self) -> Iterator[InstalledMod]:
         """Yields used mods."""
         used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
@@ -216,6 +222,10 @@ class Server(NamedTuple):
                 return load(file)
         except FileNotFoundError:
             return {}
+
+    def mission(self, name: str) -> Mission:
+        """Returns the path to the respective mission."""
+        return Mission(self.mpmissions / name)
 
     def rcon(self, timeout: float | None = 1.0):
         """Returns an RCon client."""
