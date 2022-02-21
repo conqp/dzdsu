@@ -51,14 +51,14 @@ def main() -> int:
             lambda installed_mod: installed_mod.mod, server.installed_mods
         )))
 
-    if args.shutdown:
-        return 0 if shutdown(
-            server,
-            args.message or MESSAGE_TEMPLATE_SHUTDOWN,
-            args.countdown
-        ) else 1
+    if args.shutdown and not shutdown(
+        server,
+        args.message or MESSAGE_TEMPLATE_SHUTDOWN,
+        args.countdown
+    ):
+        return 1
 
-    if args.needs_restart:
-        return 0 if server.needs_restart else 1
+    if args.needs_restart and not server.needs_restart:
+        return 1
 
     return 0
