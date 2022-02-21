@@ -120,11 +120,9 @@ class Server(NamedTuple):
                 continue
 
             try:
-                mod = mods[ident]
+                yield InstalledMod(mods[ident], self.base_dir)
             except KeyError:
                 yield InstalledMod(Mod(ident, None, False), self.base_dir)
-            else:
-                yield InstalledMod(mod, self.base_dir)
 
     @property
     def config_file(self) -> Path:
