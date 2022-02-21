@@ -7,7 +7,7 @@ from dzdsu.server import Server
 __all__ = ['wipe']
 
 
-def wipe(server: Server, mission: str) -> bool:
+def wipe_mission(server: Server, mission: str) -> bool:
     """Wipes a mission on a server."""
 
     try:
@@ -19,3 +19,9 @@ def wipe(server: Server, mission: str) -> bool:
 
     mission.wipe()
     return True
+
+
+def wipe(server: Server, missions: set[str]) -> bool:
+    """Wipes a mission on a server."""
+
+    return all({wipe_mission(server, mission) for mission in missions})
