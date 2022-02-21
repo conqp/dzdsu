@@ -53,10 +53,11 @@ def get_args(description: str) -> Namespace:
         help='list installed mods'
     )
     parser.add_argument(
-        '-B', '--backup', action='store_true', help='backup the server'
+        '-B', '--backup', nargs='*', metavar='mission',
+        help='backup the server'
     )
     parser.add_argument(
-        '-W', '--wipe', action='store_true', help='wipe the server'
+        '-W', '--wipe', nargs='*', metavar='mission', help='wipe the server'
     )
     parser.add_argument(
         '-T', '--shutdown', action='store_true',
@@ -65,6 +66,10 @@ def get_args(description: str) -> Namespace:
     parser.add_argument(
         '-N', '--needs-restart', action='store_true',
         help="check whether the server needs a restart"
+    )
+    parser.add_argument(
+        '-b', '--backups-dir', type=Path, default=BACKUPS_DIR, metavar='path',
+        help='path to directory containing the backups'
     )
     parser.add_argument(
         '-e', '--message', metavar='template',

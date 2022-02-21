@@ -20,7 +20,7 @@ def backup(server: Server, args: Namespace) -> int:
     """Creates a backup of the server."""
 
     for mission in set(args.mission):
-        if (file := args.backup_dir / gen_filename(server, mission)).exists():
+        if (file := args.backups_dir / gen_filename(server, mission)).exists():
             LOGGER.error('Backup file "%s" already exists.', file)
             return 1
 
