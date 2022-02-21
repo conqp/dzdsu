@@ -1,6 +1,7 @@
 """Server backups."""
 
 from datetime import datetime
+from os import name
 from pathlib import Path
 
 from dzdsu.server import Server
@@ -13,7 +14,12 @@ __all__ = ['backup']
 def gen_filename(server: Server, mission: str) -> str:
     """Generates a file name."""
 
-    return f'{server.name}-{mission}-{datetime.now().isoformat()}.tar.gz'
+    timestamp = datetime.now().isoformat()
+
+    if name == 'nt':
+        return f'{server.name}-{mission}-{timestamp.replace(":", "_")}.tar.gz'
+
+    return f'{server.name}-{mission}-{timestamp}.tar.gz'
 
 
 def backup_mission(server: Server, mission: str, backups_dir: Path) -> bool:
