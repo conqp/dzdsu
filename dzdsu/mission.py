@@ -12,11 +12,11 @@ class Mission:
     """Represents a mission."""
 
     def __init__(self, path: Path):
-        if not path.is_dir():
-            raise FileNotFoundError('No such mission:', path)
-
         if not path.is_absolute():
             raise ValueError('Refusing to create mission from relative path.')
+
+        if not path.is_dir():
+            raise FileNotFoundError('No such mission:', path)
 
         self.path = path
 
