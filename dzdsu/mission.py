@@ -24,7 +24,7 @@ class Mission:
         """Returns the path to the storage_1 folter."""
         return self.path / 'storage_1'
 
-    def backup(self, archive: Path):
+    def backup(self, archive: Path) -> None:
         """Creates a backup of the mission."""
         with TarFile.open(archive, mode='w:gz') as tarfile:
             for file_or_dir in self.path.iterdir():
