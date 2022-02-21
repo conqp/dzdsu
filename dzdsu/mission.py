@@ -15,6 +15,9 @@ class Mission:
         if not path.is_absolute():
             raise ValueError('Refusing to create mission from relative path.')
 
+        if path.is_symlink():
+            path = path.readlink()
+
         if not path.is_dir():
             raise FileNotFoundError('No such mission:', path)
 
