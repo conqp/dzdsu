@@ -37,6 +37,12 @@ def backup_mission(server: Server, mission: str, backups_dir: Path) -> bool:
 def backup(server: Server, missions: set[str], backups_dir: Path) -> bool:
     """Creates a backup of the server."""
 
+    try:
+        backups_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        LOGGER.error('Cannot create backup directory: %s', backups_dir)
+        return False
+
     return all({
         backup_mission(server, mission, backups_dir) for mission in missions
     })
