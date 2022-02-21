@@ -1,7 +1,8 @@
 """Server backups."""
 
-from argparse import Namespace
 from datetime import datetime
+from pathlib import Path
+from typing import Iterable
 
 from dzdsu.server import Server
 from dzdsu.utility.logger import LOGGER
@@ -16,11 +17,11 @@ def gen_filename(server: Server, mission: str) -> str:
     return f'{server.name}-{mission}-{datetime.now().isoformat()}.tar.gz'
 
 
-def backup(server: Server, args: Namespace) -> int:
+def backup(server: Server, missions: Iterable[str], backups_dir: Path) -> int:
     """Creates a backup of the server."""
 
-    for mission in set(args.mission):
-        if (file := args.backups_dir / gen_filename(server, mission)).exists():
+    for mission in set(missions):
+        if (file := backups_dir / gen_filename(server, mission)).exists():
             LOGGER.error('Backup file "%s" already exists.', file)
             return 1
 
