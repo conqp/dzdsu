@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from dzdsu.constants import JSON_FILE
+from dzdsu.constants import BACKUPS_DIR, JSON_FILE
 
 
 __all__ = ['get_args']
@@ -53,15 +53,15 @@ def get_args(description: str) -> Namespace:
         help='list installed mods'
     )
     parser.add_argument(
+        '-T', '--shutdown', action='store_true',
+        help="shutdown the server if it needs a restart"
+    )
+    parser.add_argument(
         '-B', '--backup', nargs='*', metavar='mission',
         help='backup the server'
     )
     parser.add_argument(
         '-W', '--wipe', nargs='*', metavar='mission', help='wipe the server'
-    )
-    parser.add_argument(
-        '-T', '--shutdown', action='store_true',
-        help="shutdown the server if it needs a restart"
     )
     parser.add_argument(
         '-N', '--needs-restart', action='store_true',

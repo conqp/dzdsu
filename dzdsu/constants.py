@@ -6,6 +6,7 @@ from pathlib import Path
 
 __all__ = [
     'BATTLEYE_GLOB',
+    'BACKUPS_DIR',
     'CONFIG_FILE',
     'DAYZ_APP_ID',
     'DAYZ_SERVER_APP_ID',
@@ -37,9 +38,12 @@ ITALIC = '\033[3m{}\033[0m'
 LINK = '\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\'
 
 if name == 'nt':
-    JSON_FILE = Path(getenv('PROGRAMFILES')) / 'dzsrv' / 'servers.json'
+    _CONFIG_DIR = Path(getenv('PROGRAMFILES')) / 'dzsrv'
+    BACKUPS_DIR = _CONFIG_DIR / 'backups'
+    JSON_FILE = _CONFIG_DIR / 'servers.json'
     SERVER_EXECUTABLE = 'DayZServer_x64.exe'
 elif name == 'posix':
+    BACKUPS_DIR = Path('/var/lib/dzbackups')
     JSON_FILE = Path('/etc/dzservers.json')
     SERVER_EXECUTABLE = 'DayZServer'
 else:
