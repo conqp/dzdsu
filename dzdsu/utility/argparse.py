@@ -53,6 +53,12 @@ def get_args(description: str) -> Namespace:
         help='list installed mods'
     )
     parser.add_argument(
+        '-B', '--backup', action='store_true', help='backup the server'
+    )
+    parser.add_argument(
+        '-W', '--wipe', action='store_true', help='wipe the server'
+    )
+    parser.add_argument(
         '-T', '--shutdown', action='store_true',
         help="shutdown the server if it needs a restart"
     )
