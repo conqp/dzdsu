@@ -28,7 +28,7 @@ DAYZ_APP_ID = 221100
 DAYZ_SERVER_APP_ID = 223350
 MESSAGE_TEMPLATE_SHUTDOWN = 'Server is going down for maintenance in {}!'
 MESSAGE_TEMPLATE_UPDATE = 'Server is going down for updates in {}!'
-MODS_DIR = Path('steamapps/workshop/content/') / str(DAYZ_APP_ID)
+MODS_DIR = Path('steamapps/workshop/content') / str(DAYZ_APP_ID)
 UNSUPPORTED_OS = OSError('Unsupported operating system.')
 STEAMCMD = 'steamcmd'
 WORKSHOP_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id={}'
