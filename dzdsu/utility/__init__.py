@@ -58,13 +58,13 @@ def main() -> int:
         args.message or MESSAGE_TEMPLATE_SHUTDOWN,
         args.countdown
     ):
-        return 1
+        return 3
 
     if args.backup and not backup(server, set(args.backup), args.backups_dir):
-        return 1
+        return 4
 
     if args.wipe and not wipe(server, set(args.wipe)):
-        return 1
+        return 5
 
     if args.needs_restart and not server.needs_restart:
         return 1
