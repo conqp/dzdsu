@@ -110,7 +110,7 @@ class Server(NamedTuple):
         """Yields installed mods."""
         mods = {mod.id: mod for mod in chain(self.mods, self.server_mods)}
 
-        for directory in self.mods_dir.glob('*'):
+        for directory in self.mods_dir.iterdir():
             if not directory.is_dir():
                 continue
 
