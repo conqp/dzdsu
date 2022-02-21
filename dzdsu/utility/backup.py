@@ -17,14 +17,26 @@ def gen_filename(server: Server, mission: str) -> str:
     return f'{server.name}-{mission}-{datetime.now().isoformat()}.tar.gz'
 
 
-def backup(server: Server, missions: Iterable[str], backups_dir: Path) -> int:
+def backup_mission(server: Server, mission: str, backups_dir: Path) -> bool:
+    """Creates a backup of a single mission."""
+
+    if (file := backups_dir / gen_filename(server, mission)).exists():
+        LOGGER.error('Backup file "%s" already exists.', file)
+        return False
+
+    try:
+        mission = server.mission(mission)
+    except (FileNotFoundError, ValueError) as error:
+        LOGGER.error(error)
+        return False
+
+    mission.backup(file)
+    return True
+
+
+def backup(server: Server, missions: set[str], backups_dir: Path) -> bool:
     """Creates a backup of the server."""
 
-    for mission in set(missions):
-        if (file := backups_dir / gen_filename(server, mission)).exists():
-            LOGGER.error('Backup file "%s" already exists.', file)
-            return 1
-
-        server.mission(mission).backup(file)
-
-    return 0
+    return all({
+        backup_mission(server, mission, backups_dir) for mission in missions
+    })
