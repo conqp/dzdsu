@@ -26,7 +26,8 @@ def backup_mission(server: Server, mission: str, backups_dir: Path) -> bool:
     try:
         mission = server.mission(mission)
     except (FileNotFoundError, ValueError) as error:
-        LOGGER.error(error)
+        LOGGER.error('Invalid mission: %s', mission)
+        LOGGER.debug(str(error))
         return False
 
     mission.backup(file)
