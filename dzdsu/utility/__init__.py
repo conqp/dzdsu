@@ -11,6 +11,7 @@ from dzdsu.utility.logger import LOGGER
 from dzdsu.utility.mods import clean_mods, fix_mod_paths, install_keys
 from dzdsu.utility.shutdown import shutdown
 from dzdsu.utility.update import update
+from dzdsu.utility.wipe import wipe
 
 
 __all__ = ['main']
@@ -60,6 +61,9 @@ def main() -> int:
         return 1
 
     if args.backup and not backup(server, set(args.backup), args.backups_dir):
+        return 1
+
+    if args.wipe and not wipe(server, set(args.wipe)):
         return 1
 
     if args.needs_restart and not server.needs_restart:
