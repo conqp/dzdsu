@@ -123,7 +123,6 @@ class Server(NamedTuple):
                 mod = mods[ident]
             except KeyError:
                 yield InstalledMod(Mod(ident, None, False), self.base_dir)
-
             else:
                 yield InstalledMod(mod, self.base_dir)
 
