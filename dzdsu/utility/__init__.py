@@ -6,6 +6,7 @@ from dzdsu.constants import MESSAGE_TEMPLATE_SHUTDOWN
 from dzdsu.mods import print_mods
 from dzdsu.server import load_servers
 from dzdsu.utility.argparse import get_args
+from dzdsu.utility.backup import backup
 from dzdsu.utility.logger import LOGGER
 from dzdsu.utility.mods import clean_mods, fix_mod_paths, install_keys
 from dzdsu.utility.shutdown import shutdown
@@ -56,6 +57,9 @@ def main() -> int:
         args.message or MESSAGE_TEMPLATE_SHUTDOWN,
         args.countdown
     ):
+        return 1
+
+    if args.backup and not backup(server, set(args.backup), args.backups_dir):
         return 1
 
     if args.needs_restart and not server.needs_restart:
