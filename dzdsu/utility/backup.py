@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable
 
 from dzdsu.server import Server
 from dzdsu.utility.logger import LOGGER
