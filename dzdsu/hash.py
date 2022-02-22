@@ -11,8 +11,4 @@ def hash_changed(old: dict[str, str], new: dict[str, str]) -> bool:
         if (new_value := new.get(key)) is not None and new_value != value:
             return True
 
-    for key in new:
-        if key not in old:
-            return True
-
-    return False
+    return any(key not in old for key in new)
