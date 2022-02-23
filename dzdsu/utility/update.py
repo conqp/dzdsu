@@ -22,7 +22,7 @@ def update(server: Server, args: Namespace) -> None:
         return _update_nt(server, args)
 
     if name == 'posix':
-        return _update(server, args)
+        return _update_posix(server, args)
 
     raise UNSUPPORTED_OS
 
@@ -37,12 +37,26 @@ def _update_nt(server: Server, args: Namespace) -> None:
 
     LOGGER.info('Waiting for server to shut down.')
 
+    with server.update_lockfile:
+        _await_shutdown(server)
+        _update(server, args)
+
+
+def _update_posix(server: Server, args: Namespace) -> None:
+    """Update POSIX systems."""
+
+    with server.update_lockfile:
+        return _update(server, args)
+
+
+def _await_shutdown(server: Server) -> None:
+    """Wait for the server to shut down."""
+
     while server.is_running:
         print('.', end='', flush=True)
         sleep(1)
 
     print()
-    _update(server, args)
 
 
 def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
@@ -88,7 +102,5 @@ def _update(server: Server, args: Namespace) -> None:
     if args.update_mods:
         updater.update_mods()
 
-    with server.update_lockfile:
-        updater()
-
+    updater()
     print()
