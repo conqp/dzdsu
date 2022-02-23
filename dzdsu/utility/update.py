@@ -2,6 +2,7 @@
 
 from argparse import Namespace
 from os import name
+from time import sleep
 
 from dzdsu.constants import MESSAGE_TEMPLATE_UPDATE, UNSUPPORTED_OS
 from dzdsu.hash import hash_changed
@@ -34,6 +35,13 @@ def _update_nt(server: Server, args: Namespace) -> None:
     if not _nt_pre_update_shutdown(server, args):
         return
 
+    LOGGER.info('Waiting for server to shut down.')
+
+    while server.is_running:
+        print('.', end='', flush=True)
+        sleep(1)
+
+    print()
     _update(server, args)
 
 
@@ -51,7 +59,8 @@ def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
             args.message or MESSAGE_TEMPLATE_UPDATE,
             args.countdown
     ):
-        LOGGER.warning('Could not shutdown server prior to update.')
+        LOGGER.error('Could not shutdown server prior to update.')
+        return False
 
     return True
 

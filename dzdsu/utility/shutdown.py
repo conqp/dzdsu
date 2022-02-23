@@ -1,7 +1,5 @@
 """Server shutdown."""
 
-from time import sleep
-
 from dzdsu.server import Server
 from dzdsu.utility.logger import LOGGER
 
@@ -35,11 +33,4 @@ def shutdown(server: Server, message: str, countdown: int) -> bool:
     except (ConnectionRefusedError, TimeoutError, ConnectionResetError):
         return False
 
-    LOGGER.info('Waiting for server to shut down.')
-
-    while server.is_running:
-        print('.', end='', flush=True)
-        sleep(1)
-
-    print()
     return True
