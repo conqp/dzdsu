@@ -38,7 +38,7 @@ def shutdown(server: Server, message: str, countdown: int) -> bool:
     LOGGER.info('Waiting for server to shut down.')
 
     while server.is_running:
-        print('.', end='')
+        print('.', end='', flush=True)
         sleep(1)
 
     print()
