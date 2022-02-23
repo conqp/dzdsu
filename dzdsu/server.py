@@ -8,6 +8,8 @@ from json import dump, load
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
+from psutil import process_iter
+
 from dzdsu.constants import BATTLEYE_GLOB
 from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
@@ -151,6 +153,15 @@ class Server(NamedTuple):
                 yield InstalledMod(mods[ident], self.base_dir)
             except KeyError:
                 yield InstalledMod(Mod(ident, None, False), self.base_dir)
+
+    @property
+    def is_running(self) -> bool:
+        """Determines whether the executable is running."""
+        for process in process_iter():
+            if process.name() == self.executable:
+                return True
+
+        return False
 
     @property
     def mods_dir(self) -> Path:

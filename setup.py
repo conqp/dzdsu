@@ -9,7 +9,7 @@ setup(
     setup_requires=['setuptools_scm'],
     author='Richard Neumann',
     author_email='mail@richard-neumann.de',
-    install_requires=['rcon'],
+    install_requires=['psutil', 'rcon'],
     python_requires='>=3.10',
     packages=[
         'dzdsu',
