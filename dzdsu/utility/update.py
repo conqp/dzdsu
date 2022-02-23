@@ -46,7 +46,7 @@ def _update_posix(server: Server, args: Namespace) -> None:
     """Update POSIX systems."""
 
     with server.update_lockfile:
-        return _update(server, args)
+        _update(server, args)
 
 
 def _await_shutdown(server: Server) -> None:
