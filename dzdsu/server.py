@@ -50,18 +50,52 @@ class Server(NamedTuple):
         )
 
     @property
-    def executable_path(self) -> Path:
-        """Returns the full command for running the server."""
-        if self.executable.is_absolute():
-            return self.executable
-
-        return self.base_dir / self.executable
+    def battleye_cfg(self) -> dict[str, str | int | bool]:
+        """Returns the BattlEye RCon configuration."""
+        with self.battleye_cfg_file.open('r', encoding='utf-8') as file:
+            return dict(parse_battleye_cfg(file))
 
     @property
-    def sha1sum(self) -> str:
-        """Returns the SHA-1 checksum."""
-        with self.executable_path.open('rb') as file:
-            return sha1(file.read()).hexdigest()
+    def battleye_cfg_file(self) -> Path:
+        """Returns the BattlEye RCon config file."""
+        for path in self.battleye_dir.glob(BATTLEYE_GLOB):
+            if path.is_file():
+                return path
+
+        raise FileNotFoundError(BATTLEYE_GLOB)
+
+    @property
+    def battleye_dir(self) -> Path:
+        """Returns the profile directory."""
+        return self.base_dir / 'battleye'
+
+    @property
+    def command(self) -> list[str]:
+        """Returns the full command for running the server."""
+        return [str(self.executable_path), *self.executable_args]
+
+    @property
+    def config(self) -> SectionProxy:
+        """Returns the configuration settings."""
+        with self.config_file.open('r', encoding='utf-8') as file:
+            return parse_server_cfg(file)
+
+    @property
+    def config_file(self) -> Path:
+        """Returns the config file path."""
+        return self.base_dir / 'serverDZ.cfg'
+
+    @property
+    def copy_dir(self) -> Path:
+        """Returns the path to the server copy dir."""
+        return self.base_dir / '.update_copy'
+
+    @property
+    def enabled_mods(self) -> set[Mod]:
+        """Yields enabled mods."""
+        return {
+            mod for mod in chain(self.mods, self.server_mods) if mod.enabled
+        }
 
     @property
     def executable_args(self) -> Iterator[str]:
@@ -76,34 +110,28 @@ class Server(NamedTuple):
             yield f'-serverMod={mods}'
 
     @property
-    def command(self) -> list[str]:
+    def executable_path(self) -> Path:
         """Returns the full command for running the server."""
-        return [str(self.executable_path), *self.executable_args]
+        if self.executable.is_absolute():
+            return self.executable
+
+        return self.base_dir / self.executable
 
     @property
-    def mods_dir(self) -> Path:
-        """Returns the server's mods directory."""
-        return self.base_dir / MODS_DIR
+    def hashes(self) -> dict[str, str]:
+        """Returns the server's and its mods' hashes."""
+        return {
+            'server': self.sha1sum,
+            **{
+                str(installed_mod.mod.id): installed_mod.sha1sum
+                for installed_mod in self.used_mods
+            }
+        }
 
     @property
-    def battleye_dir(self) -> Path:
-        """Returns the profile directory."""
-        return self.base_dir / 'battleye'
-
-    @property
-    def battleye_cfg_file(self) -> Path:
-        """Returns the BattlEye RCon config file."""
-        for path in self.battleye_dir.glob(BATTLEYE_GLOB):
-            if path.is_file():
-                return path
-
-        raise FileNotFoundError(BATTLEYE_GLOB)
-
-    @property
-    def battleye_cfg(self) -> dict[str, str | int | bool]:
-        """Returns the BattlEye RCon configuration."""
-        with self.battleye_cfg_file.open('r', encoding='utf-8') as file:
-            return dict(parse_battleye_cfg(file))
+    def hashes_file(self) -> Path:
+        """Returns a hashes file."""
+        return self.base_dir / '.hashes.json'
 
     @property
     def installed_mods(self) -> Iterator[InstalledMod]:
@@ -125,22 +153,9 @@ class Server(NamedTuple):
                 yield InstalledMod(Mod(ident, None, False), self.base_dir)
 
     @property
-    def config_file(self) -> Path:
-        """Returns the config file path."""
-        return self.base_dir / 'serverDZ.cfg'
-
-    @property
-    def config(self) -> SectionProxy:
-        """Returns the configuration settings."""
-        with self.config_file.open('r', encoding='utf-8') as file:
-            return parse_server_cfg(file)
-
-    @property
-    def enabled_mods(self) -> set[Mod]:
-        """Yields enabled mods."""
-        return {
-            mod for mod in chain(self.mods, self.server_mods) if mod.enabled
-        }
+    def mods_dir(self) -> Path:
+        """Returns the server's mods directory."""
+        return self.base_dir / MODS_DIR
 
     @property
     def mpmissions(self) -> Path:
@@ -148,13 +163,15 @@ class Server(NamedTuple):
         return self.base_dir / 'mpmissions'
 
     @property
-    def used_mods(self) -> Iterator[InstalledMod]:
-        """Yields used mods."""
-        used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
+    def needs_restart(self) -> bool:
+        """Checks whether the server needs a restart."""
+        return hash_changed(self.hashes, self.load_hashes())
 
-        for installed_mod in self.installed_mods:
-            if installed_mod.mod.id in used_ids:
-                yield installed_mod
+    @property
+    def sha1sum(self) -> str:
+        """Returns the SHA-1 checksum."""
+        with self.executable_path.open('rb') as file:
+            return sha1(file.read()).hexdigest()
 
     @property
     def unused_mods(self) -> Iterator[InstalledMod]:
@@ -166,27 +183,6 @@ class Server(NamedTuple):
                 yield installed_mod
 
     @property
-    def hashes_file(self) -> Path:
-        """Returns a hashes file."""
-        return self.base_dir / '.hashes.json'
-
-    @property
-    def hashes(self) -> dict[str, str]:
-        """Returns the server's and its mods' hashes."""
-        return {
-            'server': self.sha1sum,
-            **{
-                str(installed_mod.mod.id): installed_mod.sha1sum
-                for installed_mod in self.used_mods
-            }
-        }
-
-    @property
-    def needs_restart(self) -> bool:
-        """Checks whether the server needs a restart."""
-        return hash_changed(self.hashes, self.load_hashes())
-
-    @property
     def update_lockfile(self) -> LockFile:
         """Returns the path to the update lock file."""
         return LockFile(
@@ -196,9 +192,13 @@ class Server(NamedTuple):
         )
 
     @property
-    def copy_dir(self) -> Path:
-        """Returns the path to the server copy dir."""
-        return self.base_dir / '.update_copy'
+    def used_mods(self) -> Iterator[InstalledMod]:
+        """Yields used mods."""
+        used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
+
+        for installed_mod in self.installed_mods:
+            if installed_mod.mod.id in used_ids:
+                yield installed_mod
 
     def chdir(self, base_dir: Path) -> Server:
         """Returns a server copy with a changed base dir."""
@@ -207,10 +207,24 @@ class Server(NamedTuple):
             self.mods, self.server_mods, self.params
         )
 
-    def update_hashes(self) -> None:
-        """Updates the hashes file."""
-        with self.hashes_file.open('w', encoding='utf-8') as file:
-            dump(self.hashes, file)
+    def countdown(self, template: str, countdown: int = 120) -> None:
+        """Notify users with a countdown."""
+        if countdown <= 0:
+            return
+
+        with self.rcon() as rcon:
+            rcon.countdown(template, countdown)
+
+    def kick(self, player: int | str, reason: str | None = None) -> None:
+        """Kicks the respective player."""
+        with self.rcon() as rcon:
+            rcon.kick(player, reason=reason)
+
+    def kick_all(self, reason: str | None = None) -> None:
+        """Kick all players."""
+        with self.rcon() as rcon:
+            for player in range(self.config.getint('maxPlayers')):
+                rcon.kick(player, reason=reason)
 
     def load_hashes(self) -> dict[str, str]:
         """Loads hashes for the server."""
@@ -233,36 +247,15 @@ class Server(NamedTuple):
             timeout=timeout
         )
 
-    def countdown(self, template: str, countdown: int = 120) -> None:
-        """Notify users with a countdown."""
-        if countdown <= 0:
-            return
-
-        with self.rcon() as rcon:
-            rcon.countdown(template, countdown)
-
-    def kick(self, player: int | str, reason: str | None = None) -> None:
-        """Kicks the respective player."""
-        with self.rcon() as rcon:
-            rcon.kick(player, reason=reason)
-
-    def kick_all(self, reason: str | None = None) -> None:
-        """Kick all players."""
-        with self.rcon() as rcon:
-            for player in range(self.config.getint('maxPlayers')):
-                rcon.kick(player, reason=reason)
-
     def shutdown(self) -> None:
         """Shutdown the server."""
         with self.rcon() as rcon:
             rcon.shutdown()
 
-
-def load_servers_json(file: Path) -> dict[str, Any]:
-    """Loads servers from a JSON file."""
-
-    with file.open('rb') as json:
-        return load(json)
+    def update_hashes(self) -> None:
+        """Updates the hashes file."""
+        with self.hashes_file.open('w', encoding='utf-8') as file:
+            dump(self.hashes, file)
 
 
 def load_servers(file: Path = JSON_FILE) -> dict[str, Server]:
@@ -272,3 +265,10 @@ def load_servers(file: Path = JSON_FILE) -> dict[str, Server]:
         name: Server.from_json(name, json)
         for name, json in load_servers_json(file).items()
     }
+
+
+def load_servers_json(file: Path) -> dict[str, Any]:
+    """Loads servers from a JSON file."""
+
+    with file.open('rb') as json:
+        return load(json)
