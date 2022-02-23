@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 from configparser import SectionProxy
+from contextlib import suppress
 from hashlib import sha1
 from itertools import chain
 from json import dump, load
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
-from psutil import process_iter
+from psutil import AccessDenied, process_iter
 
 from dzdsu.constants import BATTLEYE_GLOB
 from dzdsu.constants import DAYZ_SERVER_APP_ID
 from dzdsu.constants import JSON_FILE
 from dzdsu.constants import MODS_DIR
+from dzdsu.constants import PROCESS_NAME
 from dzdsu.constants import SERVER_EXECUTABLE
 from dzdsu.hash import hash_changed
 from dzdsu.lockfile import LockFile
@@ -158,8 +160,11 @@ class Server(NamedTuple):
     def is_running(self) -> bool:
         """Determines whether the executable is running."""
         for process in process_iter():
-            if process.name() == self.executable:
-                return True
+            if process.name() == PROCESS_NAME:
+                with suppress(AccessDenied):
+                    for file in process.open_files():
+                        if Path(file.path).is_relative_to(self.base_dir):
+                            return True
 
         return False
 

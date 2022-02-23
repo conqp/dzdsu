@@ -16,6 +16,7 @@ __all__ = [
     'MESSAGE_TEMPLATE_SHUTDOWN',
     'MESSAGE_TEMPLATE_UPDATE',
     'MODS_DIR',
+    'PROCESS_NAME',
     'SERVER_EXECUTABLE',
     'STEAMCMD',
     'UNSUPPORTED_OS',
@@ -41,10 +42,11 @@ if name == 'nt':
     _CONFIG_DIR = Path(getenv('PROGRAMFILES')) / 'dzsrv'
     BACKUPS_DIR = _CONFIG_DIR / 'backups'
     JSON_FILE = _CONFIG_DIR / 'servers.json'
-    SERVER_EXECUTABLE = 'DayZServer_x64.exe'
+    PROCESS_NAME = SERVER_EXECUTABLE = 'DayZServer_x64.exe'
 elif name == 'posix':
     BACKUPS_DIR = Path('/var/lib/dzbackups')
     JSON_FILE = Path('/etc/dzservers.json')
+    PROCESS_NAME = 'enfMain'
     SERVER_EXECUTABLE = 'DayZServer'
 else:
     raise UNSUPPORTED_OS
