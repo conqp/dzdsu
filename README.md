@@ -141,7 +141,7 @@ The outermost object defines key-value pairs of server names and server objects.
 }
 ```
 #### Disable mods
-Mods with IDs <= 0 will be filtered out.  
+Mods with IDs < 0 will be filtered out.  
 So you can disable mods on a server by prefixing their ID with `-`,  i.e. making the ID negative.
 
 ### Default file paths
