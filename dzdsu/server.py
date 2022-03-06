@@ -1,4 +1,4 @@
-"""Server representation."""
+"""Server representation and related operations."""
 
 from __future__ import annotations
 from configparser import SectionProxy
