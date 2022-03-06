@@ -15,11 +15,12 @@ def gen_filename(server: Server, mission: str) -> str:
     """Generates a file name."""
 
     timestamp = datetime.now().isoformat()
+    filename = f'{server.name}-{mission}-{timestamp}.tar.gz'
 
     if name == 'nt':
-        return f'{server.name}-{mission}-{timestamp.replace(":", "_")}.tar.gz'
+        return filename.replace(":", "_")
 
-    return f'{server.name}-{mission}-{timestamp}.tar.gz'
+    return filename
 
 
 def backup_mission(server: Server, mission: str, backups_dir: Path) -> bool:
