@@ -11,10 +11,14 @@ __all__ = ['Client']
 class Client(battleye.Client):
     """RCon client with common methods."""
 
+    def broadcast(self, message: str) -> str:
+        """Broadcasts a message to all players."""
+        return self.say(-1, message)
+
     def countdown(self, template: str, countdown: int) -> None:
         """Notify users about shutdown."""
         for passed in range(countdown):
-            self.say(-1, template.format(countdown - passed))
+            self.broadcast(template.format(countdown - passed))
             sleep(1)
 
             if self.passwd is not None:
