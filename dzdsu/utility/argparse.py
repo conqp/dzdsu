@@ -85,4 +85,5 @@ def get_args(description: str) -> Namespace:
     parser.add_argument(
         '-q', '--quiet', action='store_true', help='suppress info messages'
     )
+    parser.add_argument('--force', action='store_true', help='force update')
     return parser.parse_args()

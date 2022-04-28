@@ -62,7 +62,7 @@ def _await_shutdown(server: Server) -> None:
 def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
     """Conditionally shutdown server before update on NT platforms."""
 
-    if not _nt_needs_update(server, args):
+    if not (args.force or _nt_needs_update(server, args)):
         LOGGER.info('No update required.')
         return False
 
