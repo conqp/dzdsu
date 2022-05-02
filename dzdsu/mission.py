@@ -27,7 +27,7 @@ class Mission:
 
     @property
     def storage_1(self) -> Path:
-        """Returns the path to the storage_1 folter."""
+        """Returns the path to the storage_1 folder."""
         return self.path / 'storage_1'
 
     def backup(self, archive: Path) -> None:
