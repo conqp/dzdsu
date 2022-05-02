@@ -5,7 +5,7 @@ __all__ = ['hash_changed']
 
 
 def hash_changed(old: dict[str, str], new: dict[str, str]) -> bool:
-    """Returns True iff the hashes are considered equal."""
+    """Returns True iff the hashes are not equal."""
 
     for key, value in old.items():
         if (new_value := new.get(key)) is not None and new_value != value:
