@@ -39,7 +39,7 @@ def get_args(description: str) -> Namespace:
         '-K', '--install-keys', action='store_true', help='install mod keys'
     )
     parser.add_argument(
-        '--overwrite', action='store_true', help="overwrite existing key files"
+        '--overwrite', action='store_true', help='overwrite existing key files'
     )
     parser.add_argument(
         '-M', '--list-mods', action='store_true', help="list the server's mods"
