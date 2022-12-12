@@ -1,6 +1,7 @@
 """Game and mod updates."""
 
 from __future__ import annotations
+from logging import getLogger
 from subprocess import CompletedProcess, run
 
 from dzdsu.constants import DAYZ_APP_ID, STEAMCMD
@@ -27,7 +28,8 @@ class Updater:
 
     def __call__(self) -> CompletedProcess:
         """Executes the steamcmd command."""
-        return run(self.command, check=True)
+        getLogger('dzdsu').debug('Executing: %s', command := self.command)
+        return run(command, check=True)
 
     @property
     def command(self) -> list[str]:
