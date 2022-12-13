@@ -9,6 +9,7 @@ from dzdsu.hash import hash_changed
 from dzdsu.server import Server
 from dzdsu.update import Updater
 from dzdsu.utility.logger import LOGGER
+from dzdsu.utility.mods import clean_mods
 from dzdsu.utility.shutdown import shutdown
 
 
@@ -80,14 +81,20 @@ def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
 
 
 def _nt_needs_update(server: Server, args: Namespace) -> bool:
-    """Returns True iff there is an update available on an NT platform."""
+    """
+    Since we cannot update the server on NT while it is running,
+    we need to install a copy of the server and all its mods.
+    Then we can compare the copy's hashes to the running server's hashes
+    to check whether an update is available.
 
-    # Since we cannot update the server on NT while it is running,
-    # we need to install a copy of the server and all its mods.
-    # Then we can compare the copy's hashes to the running server's hashes
-    # to check whether an update is available.
+    Returns True iff there is an update available on an NT platform.
+    """
+
     server.copy_dir.mkdir(exist_ok=True)
-    _update(copy := server.chdir(server.copy_dir), args)
+    copy = server.chdir(server.copy_dir)
+    # Remove unused mods before update of copy
+    clean_mods(copy)
+    _update(copy, args)
     return hash_changed(server.hashes, copy.hashes)
 
 
