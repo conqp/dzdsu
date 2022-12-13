@@ -128,7 +128,8 @@ class Server(NamedTuple):
             'server': self.sha1sum,
             **{
                 str(installed_mod.mod.id): installed_mod.sha1sum
-                for installed_mod in self.used_mods
+                for installed_mod in self.installed_mods
+                if installed_mod.mod.enabled
             }
         }
 
@@ -209,15 +210,6 @@ class Server(NamedTuple):
             reason='Server update.',
             override=True
         )
-
-    @property
-    def used_mods(self) -> Iterator[InstalledMod]:
-        """Yields used mods."""
-        used_ids = {mod.id for mod in chain(self.mods, self.server_mods)}
-
-        for installed_mod in self.installed_mods:
-            if installed_mod.mod.id in used_ids:
-                yield installed_mod
 
     def chdir(self, base_dir: Path) -> Server:
         """Returns a server copy with a changed base dir."""
