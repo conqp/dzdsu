@@ -9,30 +9,33 @@ from dzdsu.constants import JSON_FILE
 from dzdsu.server import load_servers
 
 
-__all__ = ['main']
+__all__ = ["main"]
 
 
-LOGGER = getLogger('dzdsw')
+LOGGER = getLogger("dzdsw")
 
 
 def get_args(description: str = __doc__) -> Namespace:
     """Return the parsed command line arguments."""
 
     parser = ArgumentParser(description=description)
-    parser.add_argument('server', help='the name of the server to start')
+    parser.add_argument("server", help="the name of the server to start")
     parser.add_argument(
-        '-f', '--servers-file', type=Path, default=JSON_FILE, metavar='file',
-        help='servers JSON file path'
+        "-f",
+        "--servers-file",
+        type=Path,
+        default=JSON_FILE,
+        metavar="file",
+        help="servers JSON file path",
     )
     parser.add_argument(
-        '-F', '--fork', action='store_true',
-        help='fork server process to background'
+        "-F", "--fork", action="store_true", help="fork server process to background"
     )
     parser.add_argument(
-        '-d', '--debug', action='store_true', help='show debug messages'
+        "-d", "--debug", action="store_true", help="show debug messages"
     )
     parser.add_argument(
-        '-q', '--quiet', action='store_true', help='suppress info messages'
+        "-q", "--quiet", action="store_true", help="suppress info messages"
     )
     return parser.parse_args()
 
@@ -48,11 +51,11 @@ def main() -> int:
     try:
         server = servers[args.server]
     except KeyError:
-        LOGGER.error('No such server: %s', args.server)
+        LOGGER.error("No such server: %s", args.server)
         return 2
 
     if server.update_lockfile.exists():
-        LOGGER.error('Server is currently updating.')
+        LOGGER.error("Server is currently updating.")
         return 3
 
     server.update_hashes()

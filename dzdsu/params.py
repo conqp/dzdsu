@@ -6,7 +6,7 @@ from typing import NamedTuple, Iterator, Optional
 from dzdsu.constants import CONFIG_FILE
 
 
-__all__ = ['ServerParams']
+__all__ = ["ServerParams"]
 
 
 class ServerParams(NamedTuple):
@@ -28,50 +28,50 @@ class ServerParams(NamedTuple):
     def from_json(cls, json: dict):
         """Creates a ServerParams instance from a JSON-ish dict."""
         return cls(
-            json.get('config', CONFIG_FILE),
-            json.get('doLogs', True),
-            json.get('adminLog', True),
-            json.get('netLog', True),
-            json.get('srcAllowFileWrite', True),
-            json.get('noFilePatching', True),
-            json.get('freezeCheck', True),
-            None if (ip := json.get('ip')) is None else ip_address(ip),
-            json.get('port'),
-            json.get('profiles'),
-            json.get('cpuCount')
+            json.get("config", CONFIG_FILE),
+            json.get("doLogs", True),
+            json.get("adminLog", True),
+            json.get("netLog", True),
+            json.get("srcAllowFileWrite", True),
+            json.get("noFilePatching", True),
+            json.get("freezeCheck", True),
+            None if (ip := json.get("ip")) is None else ip_address(ip),
+            json.get("port"),
+            json.get("profiles"),
+            json.get("cpuCount"),
         )
 
     @property
     def executable_args(self) -> Iterator[str]:
         """Yields arguments for the server executable."""
-        yield f'-config={self.config}'
+        yield f"-config={self.config}"
 
         if self.do_logs:
-            yield '-doLogs'
+            yield "-doLogs"
 
         if self.admin_log:
-            yield '-adminLog'
+            yield "-adminLog"
 
         if self.net_log:
-            yield '-netLog'
+            yield "-netLog"
 
         if self.src_allow_file_write:
-            yield '-srcAllowFileWrite'
+            yield "-srcAllowFileWrite"
 
         if self.no_file_patching:
-            yield '-noFilePatching'
+            yield "-noFilePatching"
 
         if self.freeze_check:
-            yield '-freezeCheck'
+            yield "-freezeCheck"
 
         if self.ip is not None:
-            yield f'-ip={self.ip}'
+            yield f"-ip={self.ip}"
 
         if self.port is not None:
-            yield f'-port={self.port}'
+            yield f"-port={self.port}"
 
         if self.profiles is not None:
-            yield f'-profiles={self.profiles}'
+            yield f"-profiles={self.profiles}"
 
         if self.cpu_count is not None:
-            yield f'-cpuCount={self.cpu_count}'
+            yield f"-cpuCount={self.cpu_count}"

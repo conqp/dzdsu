@@ -13,7 +13,7 @@ from dzdsu.constants import MODS_DIR
 from dzdsu.constants import WORKSHOP_URL
 
 
-__all__ = ['Mod', 'InstalledMod', 'mods_str', 'print_mods']
+__all__ = ["Mod", "InstalledMod", "mods_str", "print_mods"]
 
 
 class Mod(NamedTuple):
@@ -30,7 +30,7 @@ class Mod(NamedTuple):
     def from_id(cls, ident: int, *, name: Optional[str] = None) -> Mod:
         """Creates a mod from an ID."""
         if ident == 0:
-            raise ValueError(f'Invalid mod ID: {ident}')
+            raise ValueError(f"Invalid mod ID: {ident}")
 
         if ident < 0:
             return cls(abs(ident), name, enabled=False)
@@ -40,7 +40,7 @@ class Mod(NamedTuple):
     @classmethod
     def from_json(cls, json: dict[str, int | str]) -> Mod:
         """Creates a mod from a JSON-ish dict."""
-        return cls.from_id(json['id'], name=json.get('name'))
+        return cls.from_id(json["id"], name=json.get("name"))
 
     @classmethod
     def from_value(cls, value: int | dict[str, int | str]) -> Mod:
@@ -51,7 +51,7 @@ class Mod(NamedTuple):
         if isinstance(value, dict):
             return cls.from_json(value)
 
-        raise TypeError(f'Cannot create mod from: {value} ({type(value)})')
+        raise TypeError(f"Cannot create mod from: {value} ({type(value)})")
 
     @property
     def path(self) -> Path:
@@ -78,40 +78,40 @@ class InstalledMod(NamedTuple):
     @property
     def addons(self) -> Path:
         """Returns the path to the addons directory."""
-        return self.path / 'addons'
+        return self.path / "addons"
 
     @property
     def keys(self) -> Path:
         """Returns the path to the keys directory."""
-        return self.path / 'keys'
+        return self.path / "keys"
 
     @property
     def metadata(self) -> Path:
         """Returns the path to the metadata file."""
-        return self.path / 'meta.cpp'
+        return self.path / "meta.cpp"
 
     @property
     def sha1sum(self) -> str:
         """Returns the SHA-1 checksum."""
-        with self.metadata.open('rb') as file:
+        with self.metadata.open("rb") as file:
             return sha1(file.read()).hexdigest()
 
     @property
     def pbos(self) -> Iterator[Path]:
         """Yields paths to the .pbo files."""
-        return self.addons.glob('*.pbo')
+        return self.addons.glob("*.pbo")
 
     @property
     def bikeys(self) -> Iterator[Path]:
         """Yields paths to the *.bikey files."""
-        return self.keys.glob('*.bikey')
+        return self.keys.glob("*.bikey")
 
     def fix_paths(self) -> None:
         """Links paths to lower-case."""
-        if (addons := self.path / 'Addons').is_dir():
+        if (addons := self.path / "Addons").is_dir():
             link_to_lowercase(addons)
 
-        if (keys := self.path / 'Keys').is_dir():
+        if (keys := self.path / "Keys").is_dir():
             link_to_lowercase(keys)
 
         for pbo in self.pbos:
@@ -135,7 +135,7 @@ def link_to_lowercase(path: Path) -> None:
     symlink.symlink_to(filename)
 
 
-def mods_str(mods: Iterable[Mod], sep: str = ';') -> str:
+def mods_str(mods: Iterable[Mod], sep: str = ";") -> str:
     """Returns a string representation of the given mods."""
 
     return sep.join(str(mod.path) for mod in mods)

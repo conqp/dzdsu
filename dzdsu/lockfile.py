@@ -4,19 +4,13 @@ from os import linesep
 from pathlib import Path
 
 
-__all__ = ['LockFile']
+__all__ = ["LockFile"]
 
 
 class LockFile:
     """A lock file."""
 
-    def __init__(
-            self,
-            file: Path,
-            reason: str = 'locked',
-            *,
-            override: bool = False
-    ):
+    def __init__(self, file: Path, reason: str = "locked", *, override: bool = False):
         self.file = file
         self.reason = reason
         self.override = override
@@ -28,7 +22,7 @@ class LockFile:
         if self.file.exists() and not self.override:
             raise FileExistsError()
 
-        with self.file.open('w', encoding='utf-8') as file:
+        with self.file.open("w", encoding="utf-8") as file:
             file.write(self.reason)
             file.write(linesep)
 

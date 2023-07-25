@@ -5,7 +5,7 @@ from shutil import rmtree
 from tarfile import TarFile
 
 
-__all__ = ['Mission']
+__all__ = ["Mission"]
 
 
 class Mission:
@@ -13,10 +13,10 @@ class Mission:
 
     def __init__(self, path: Path):
         if not path.is_absolute():
-            raise ValueError('Refusing to create mission from relative path.')
+            raise ValueError("Refusing to create mission from relative path.")
 
         if not path.is_dir():
-            raise FileNotFoundError('No such mission:', path)
+            raise FileNotFoundError("No such mission:", path)
 
         self.path = path
 
@@ -28,11 +28,11 @@ class Mission:
     @property
     def storage_1(self) -> Path:
         """Returns the path to the storage_1 folder."""
-        return self.path / 'storage_1'
+        return self.path / "storage_1"
 
     def backup(self, archive: Path) -> None:
         """Creates a backup of the mission."""
-        with TarFile.open(archive, mode='w:gz') as tarfile:
+        with TarFile.open(archive, mode="w:gz") as tarfile:
             for file_or_dir in self.path.iterdir():
                 tarfile.add(file_or_dir)
 

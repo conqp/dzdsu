@@ -5,7 +5,7 @@ from time import sleep
 from rcon import battleye
 
 
-__all__ = ['Client']
+__all__ = ["Client"]
 
 
 class Client(battleye.Client):
@@ -27,14 +27,14 @@ class Client(battleye.Client):
     def kick(self, player: int | str, reason: str | None = None) -> str:
         """Kicks the respective player."""
         if reason is None:
-            return self.run(f'kick {player}')
+            return self.run(f"kick {player}")
 
-        return self.run(f'kick {player} {reason}')
+        return self.run(f"kick {player} {reason}")
 
     def say(self, player: int | str, message: str) -> str:
         """Say something to a player."""
-        return self.run(f'say {player} {message}')
+        return self.run(f"say {player} {message}")
 
     def shutdown(self) -> str:
         """Shutdown the server."""
-        return self.run('#shutdown')
+        return self.run("#shutdown")

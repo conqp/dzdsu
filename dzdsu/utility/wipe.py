@@ -4,7 +4,7 @@ from dzdsu.utility.logger import LOGGER
 from dzdsu.server import Server
 
 
-__all__ = ['wipe']
+__all__ = ["wipe"]
 
 
 def wipe_mission(server: Server, mission: str) -> bool:
@@ -13,7 +13,7 @@ def wipe_mission(server: Server, mission: str) -> bool:
     try:
         mission = server.mission(mission)
     except (FileNotFoundError, ValueError) as error:
-        LOGGER.error('Invalid mission: %s', mission)
+        LOGGER.error("Invalid mission: %s", mission)
         LOGGER.debug(str(error))
         return False
 

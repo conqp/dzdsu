@@ -4,25 +4,19 @@
 from setuptools import setup
 
 setup(
-    name='dzdsu',
+    name="dzdsu",
     use_scm_version=True,
-    setup_requires=['setuptools_scm'],
-    author='Richard Neumann',
-    author_email='mail@richard-neumann.de',
-    install_requires=['psutil', 'rcon'],
-    python_requires='>=3.10',
-    packages=[
-        'dzdsu',
-        'dzdsu.utility'
-    ],
+    setup_requires=["setuptools_scm"],
+    author="Richard Neumann",
+    author_email="mail@richard-neumann.de",
+    install_requires=["psutil", "rcon"],
+    python_requires=">=3.10",
+    packages=["dzdsu", "dzdsu.utility"],
     entry_points={
-        'console_scripts': [
-            'dzdsu = dzdsu.utility:main',
-            'dzdsw = dzdsu.wrapper:main'
-        ]
+        "console_scripts": ["dzdsu = dzdsu.utility:main", "dzdsw = dzdsu.wrapper:main"]
     },
-    url='https://github.com/conqp/dzdsu',
-    license='GPLv3',
-    description='DayZ dedicated server utilities',
-    keywords='DayZ dedicated server utilities'
+    url="https://github.com/conqp/dzdsu",
+    license="GPLv3",
+    description="DayZ dedicated server utilities",
+    keywords="DayZ dedicated server utilities",
 )

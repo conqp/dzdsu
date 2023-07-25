@@ -4,7 +4,7 @@ from dzdsu.server import Server
 from dzdsu.utility.logger import LOGGER
 
 
-__all__ = ['shutdown']
+__all__ = ["shutdown"]
 
 
 def shutdown(server: Server, message: str, countdown: int) -> bool:
@@ -16,17 +16,17 @@ def shutdown(server: Server, message: str, countdown: int) -> bool:
     try:
         server.countdown(message, countdown=countdown)
     except (ConnectionRefusedError, TimeoutError, ConnectionResetError):
-        LOGGER.error('Could not notify users about shutdown.')
+        LOGGER.error("Could not notify users about shutdown.")
         return False
 
-    LOGGER.info('Kicking remaining players.')
+    LOGGER.info("Kicking remaining players.")
 
     try:
-        server.kick_all('Server restart.')
+        server.kick_all("Server restart.")
     except (ConnectionRefusedError, TimeoutError, ConnectionResetError):
-        LOGGER.warning('Could not kick all remaining players.')
+        LOGGER.warning("Could not kick all remaining players.")
 
-    LOGGER.info('Stopping server.')
+    LOGGER.info("Stopping server.")
 
     try:
         server.shutdown()

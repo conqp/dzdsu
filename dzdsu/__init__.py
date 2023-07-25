@@ -9,14 +9,14 @@ from dzdsu.update import Updater
 
 
 __all__ = [
-    'JSON_FILE',
-    'InstalledMod',
-    'Mission',
-    'Mod',
-    'Server',
-    'ServerParams',
-    'Updater',
-    'load_servers',
-    'mods_str',
-    'print_mods'
+    "JSON_FILE",
+    "InstalledMod",
+    "Mission",
+    "Mod",
+    "Server",
+    "ServerParams",
+    "Updater",
+    "load_servers",
+    "mods_str",
+    "print_mods",
 ]

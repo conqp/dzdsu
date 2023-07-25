@@ -14,7 +14,7 @@ from dzdsu.utility.update import update
 from dzdsu.utility.wipe import wipe
 
 
-__all__ = ['main']
+__all__ = ["main"]
 
 
 def main() -> int:
@@ -27,7 +27,7 @@ def main() -> int:
     try:
         server = servers[args.server]
     except KeyError:
-        LOGGER.error('No such server: %s', args.server)
+        LOGGER.error("No such server: %s", args.server)
         return 2
 
     if args.clean_mods:
@@ -49,14 +49,12 @@ def main() -> int:
         print_mods(server.server_mods)
 
     if args.installed_mods:
-        print_mods(sorted(map(
-            lambda installed_mod: installed_mod.mod, server.installed_mods
-        )))
+        print_mods(
+            sorted(map(lambda installed_mod: installed_mod.mod, server.installed_mods))
+        )
 
     if args.shutdown and not shutdown(
-        server,
-        args.message or MESSAGE_TEMPLATE_SHUTDOWN,
-        args.countdown
+        server, args.message or MESSAGE_TEMPLATE_SHUTDOWN, args.countdown
     ):
         return 3
 

@@ -13,16 +13,16 @@ from dzdsu.utility.mods import clean_mods
 from dzdsu.utility.shutdown import shutdown
 
 
-__all__ = ['update']
+__all__ = ["update"]
 
 
 def update(server: Server, args: Namespace) -> None:
     """Updates the server."""
 
-    if name == 'nt':
+    if name == "nt":
         return _update_nt(server, args)
 
-    if name == 'posix':
+    if name == "posix":
         return _update_posix(server, args)
 
     raise UNSUPPORTED_OS
@@ -36,7 +36,7 @@ def _update_nt(server: Server, args: Namespace) -> None:
     if not _nt_pre_update_shutdown(server, args):
         return
 
-    LOGGER.info('Waiting for server to shut down.')
+    LOGGER.info("Waiting for server to shut down.")
 
     with server.update_lockfile:
         _await_shutdown(server)
@@ -54,7 +54,7 @@ def _await_shutdown(server: Server) -> None:
     """Wait for the server to shut down."""
 
     while server.is_running:
-        print('.', end='', flush=True)
+        print(".", end="", flush=True)
         sleep(1)
 
     print()
@@ -64,17 +64,13 @@ def _nt_pre_update_shutdown(server: Server, args: Namespace) -> bool:
     """Conditionally shutdown server before update on NT platforms."""
 
     if not (args.force or _nt_needs_update(server, args)):
-        LOGGER.info('No update required.')
+        LOGGER.info("No update required.")
         return False
 
-    LOGGER.info('Updates detected. Notifying users.')
+    LOGGER.info("Updates detected. Notifying users.")
 
-    if not shutdown(
-            server,
-            args.message or MESSAGE_TEMPLATE_UPDATE,
-            args.countdown
-    ):
-        LOGGER.error('Could not shutdown server prior to update.')
+    if not shutdown(server, args.message or MESSAGE_TEMPLATE_UPDATE, args.countdown):
+        LOGGER.error("Could not shutdown server prior to update.")
         return False
 
     return True

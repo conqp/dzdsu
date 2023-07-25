@@ -1,7 +1,7 @@
 """Watchdog to detect server and mod updates."""
 
 
-__all__ = ['hash_changed']
+__all__ = ["hash_changed"]
 
 
 def hash_changed(old: dict[str, str], new: dict[str, str]) -> bool:

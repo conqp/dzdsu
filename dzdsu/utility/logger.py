@@ -3,7 +3,7 @@
 from logging import getLogger
 
 
-LOGGER = getLogger('dzdsu')
+LOGGER = getLogger("dzdsu")
 
 
-__all__ = ['LOGGER']
+__all__ = ["LOGGER"]
