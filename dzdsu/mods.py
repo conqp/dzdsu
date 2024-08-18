@@ -127,6 +127,9 @@ class InstalledMod(NamedTuple):
         if (keys := self.path / "Keys").is_dir():
             link_to_lowercase(keys)
 
+        if not self.keys.exists() and (key := self.path / "key").is_dir():
+            self.keys.symlink_to(key)
+
         for pbo in self.pbos:
             link_to_lowercase(pbo)
 
