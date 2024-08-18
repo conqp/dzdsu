@@ -10,7 +10,7 @@ from typing import Iterable, Iterator, NamedTuple, Optional
 
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_DIR
-from dzdsu.constants import ITALIC
+from dzdsu.constants import STRIKETHROUGH
 from dzdsu.constants import WORKSHOP_URL
 
 __all__ = ["Mod", "InstalledMod", "mods_str", "print_mods"]
@@ -27,7 +27,7 @@ class Mod(NamedTuple):
         if self.enabled:
             return self.url_string
 
-        return ITALIC.format(self.url_string)
+        return STRIKETHROUGH.format(self.url_string)
 
     @classmethod
     def from_id(cls, ident: int, *, name: Optional[str] = None) -> Mod:
