@@ -1,17 +1,17 @@
 """Modifications from the Steam workshop."""
 
 from __future__ import annotations
+
 from hashlib import sha1
 from logging import getLogger
 from pathlib import Path
 from shutil import rmtree
 from typing import Iterable, Iterator, NamedTuple, Optional
 
-from dzdsu.constants import ITALIC
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_DIR
+from dzdsu.constants import STRIKETHROUGH
 from dzdsu.constants import WORKSHOP_URL
-
 
 __all__ = ["Mod", "InstalledMod", "mods_str", "print_mods"]
 
@@ -145,4 +145,4 @@ def print_mods(mods: Iterable[Mod]) -> None:
     """Lists the respective mods."""
 
     for mod in mods:
-        print(mod if mod.enabled else ITALIC.format(mod))
+        print(mod if mod.enabled else STRIKETHROUGH.format(mod))
