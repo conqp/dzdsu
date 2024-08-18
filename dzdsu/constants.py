@@ -10,6 +10,7 @@ __all__ = [
     "CONFIG_FILE",
     "DAYZ_APP_ID",
     "DAYZ_SERVER_APP_ID",
+    "ITALIC",
     "JSON_FILE",
     "LINK",
     "MESSAGE_TEMPLATE_SHUTDOWN",
@@ -18,7 +19,6 @@ __all__ = [
     "PROCESS_NAME",
     "SERVER_EXECUTABLE",
     "STEAMCMD",
-    "STRIKETHROUGH",
     "UNSUPPORTED_OS",
     "WORKSHOP_URL",
 ]
@@ -35,7 +35,7 @@ UNSUPPORTED_OS = OSError("Unsupported operating system.")
 STEAMCMD = "steamcmd"
 WORKSHOP_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id={}"
 
-STRIKETHROUGH = "\033[9{}\033[0m"
+ITALIC = "\033[3{}\033[0m"
 LINK = "\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\"
 
 if name == "nt":

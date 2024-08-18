@@ -10,7 +10,7 @@ from typing import Iterable, Iterator, NamedTuple, Optional
 
 from dzdsu.constants import LINK
 from dzdsu.constants import MODS_DIR
-from dzdsu.constants import STRIKETHROUGH
+from dzdsu.constants import ITALIC
 from dzdsu.constants import WORKSHOP_URL
 
 __all__ = ["Mod", "InstalledMod", "mods_str", "print_mods"]
@@ -24,7 +24,10 @@ class Mod(NamedTuple):
     enabled: bool = True
 
     def __str__(self) -> str:
-        return LINK.format(url=self.url, text=self.url_text)
+        if self.enabled:
+            return self.url_string
+
+        return ITALIC.format(self.url_string)
 
     @classmethod
     def from_id(cls, ident: int, *, name: Optional[str] = None) -> Mod:
@@ -59,22 +62,19 @@ class Mod(NamedTuple):
         return MODS_DIR / str(self.id)
 
     @property
-    def display_name(self) -> str:
-        """Returns the name or id."""
-        return self.name or str(self.id)
-
-    @property
-    def url_text(self) -> str:
+    def text(self) -> str:
         """Returns the URL text."""
-        if self.enabled:
-            return self.display_name
-
-        return STRIKETHROUGH.format(self.display_name)
+        return self.name or str(self.id)
 
     @property
     def url(self) -> str:
         """Returns the Steam Workshop URL."""
         return WORKSHOP_URL.format(self.id)
+
+    @property
+    def url_string(self) -> str:
+        """Returns the URL string."""
+        return LINK.format(url=self.url, text=self.text)
 
 
 class InstalledMod(NamedTuple):
