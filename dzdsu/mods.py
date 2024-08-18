@@ -24,7 +24,7 @@ class Mod(NamedTuple):
     enabled: bool = True
 
     def __str__(self) -> str:
-        return LINK.format(url=self.url, text=self.name or self.id)
+        return LINK.format(url=self.url, text=self.url_text)
 
     @classmethod
     def from_id(cls, ident: int, *, name: Optional[str] = None) -> Mod:
@@ -57,6 +57,19 @@ class Mod(NamedTuple):
     def path(self) -> Path:
         """Returns the relative path to the local mod directory."""
         return MODS_DIR / str(self.id)
+
+    @property
+    def display_name(self) -> str:
+        """Returns the name or id."""
+        return self.name or str(self.id)
+
+    @property
+    def url_text(self) -> str:
+        """Returns the URL text."""
+        if self.enabled:
+            return self.display_name
+
+        return STRIKETHROUGH.format(self.display_name)
 
     @property
     def url(self) -> str:
@@ -145,4 +158,4 @@ def print_mods(mods: Iterable[Mod]) -> None:
     """Lists the respective mods."""
 
     for mod in mods:
-        print(mod if mod.enabled else STRIKETHROUGH.format(mod))
+        print(mod)
