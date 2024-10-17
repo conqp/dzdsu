@@ -1,4 +1,5 @@
 """Extended RCon client."""
+from contextlib import suppress
 from threading import Thread
 from time import sleep
 
@@ -57,5 +58,6 @@ class Client(battleye.Client):
     def _handle_server_messages(self):
         """Handle server messages."""
         while self.running:
-            if isinstance(response := self.receive(), ServerMessage):
-                self.handle_server_message(response)
+            with suppress(TimeoutError):
+                if isinstance(response := self.receive(), ServerMessage):
+                    self.handle_server_message(response)
