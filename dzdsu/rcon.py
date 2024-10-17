@@ -4,7 +4,6 @@ from time import sleep
 
 from rcon import battleye
 
-
 __all__ = ["Client"]
 
 
@@ -15,14 +14,19 @@ class Client(battleye.Client):
         """Broadcasts a message to all players."""
         return self.say(-1, message)
 
-    def countdown(self, template: str, countdown: int) -> None:
+    def countdown(self, template: str, countdown: int, *, every: int = 10,
+                  always_below: int = 30) -> None:
         """Notify users about shutdown."""
-        for passed in range(countdown):
-            self.broadcast(template.format(countdown - passed))
-            sleep(1)
+        first = True
 
-            if self.passwd is not None:
-                self.login(self.passwd)
+        for passed in range(countdown):
+            remaining = countdown - passed
+
+            if first or remaining % every == 0 or remaining < always_below:
+                first = False
+                self.broadcast(template.format(remaining))
+
+            sleep(1)
 
     def kick(self, player: int | str, reason: str | None = None) -> str:
         """Kicks the respective player."""
