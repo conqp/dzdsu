@@ -39,6 +39,7 @@ class Client(battleye.Client):
             sleep(1)
 
         self.running = False
+        thread.join()
 
     def kick(self, player: int | str, reason: str | None = None) -> str:
         """Kicks the respective player."""
