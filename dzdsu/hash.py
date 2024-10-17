@@ -1,6 +1,5 @@
 """Watchdog to detect server and mod updates."""
 
-
 __all__ = ["hash_changed"]
 
 

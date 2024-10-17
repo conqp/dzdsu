@@ -14,8 +14,9 @@ class Client(battleye.Client):
         """Broadcasts a message to all players."""
         return self.say(-1, message)
 
-    def countdown(self, template: str, countdown: int, *, every: int = 10,
-                  always_below: int = 30) -> None:
+    def countdown(
+        self, template: str, countdown: int, *, every: int = 10, always_below: int = 30
+    ) -> None:
         """Notify users about shutdown."""
         first = True
 
