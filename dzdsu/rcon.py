@@ -1,5 +1,5 @@
 """Extended RCon client."""
-
+from contextlib import suppress
 from threading import Thread
 from time import sleep
 
@@ -20,7 +20,8 @@ class Client(battleye.Client):
         return self.say(-1, message)
 
     def countdown(
-        self, template: str, countdown: int, *, every: int = 10, always_below: int = 30
+            self, template: str, countdown: int, *, every: int = 10,
+            always_below: int = 30
     ) -> None:
         """Notify users about shutdown."""
         first = True
@@ -57,5 +58,6 @@ class Client(battleye.Client):
     def _handle_server_messages(self):
         """Handle server messages."""
         while self.running:
-            if isinstance(response := self.receive(), ServerMessage):
-                self.handle_server_message(response)
+            with suppress(TimeoutError):
+                if isinstance(response := self.receive(), ServerMessage):
+                    self.handle_server_message(response)
