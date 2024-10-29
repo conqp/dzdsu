@@ -22,6 +22,7 @@ class Mod(NamedTuple):
     id: int
     name: Optional[str] = None
     enabled: bool = True
+    update: bool = True
 
     def __str__(self) -> str:
         if self.enabled:
@@ -30,20 +31,24 @@ class Mod(NamedTuple):
         return STRIKETHROUGH.format(self.url_string)
 
     @classmethod
-    def from_id(cls, ident: int, *, name: Optional[str] = None) -> Mod:
+    def from_id(
+        cls, ident: int, *, name: Optional[str] = None, update: bool = True
+    ) -> Mod:
         """Creates a mod from an ID."""
         if ident == 0:
             raise ValueError(f"Invalid mod ID: {ident}")
 
         if ident < 0:
-            return cls(abs(ident), name, enabled=False)
+            return cls(abs(ident), name, enabled=False, update=update)
 
-        return cls(ident, name)
+        return cls(ident, name, update=update)
 
     @classmethod
-    def from_json(cls, json: dict[str, int | str]) -> Mod:
+    def from_json(cls, json: dict[str, int | str | bool]) -> Mod:
         """Creates a mod from a JSON-ish dict."""
-        return cls.from_id(json["id"], name=json.get("name"))
+        return cls.from_id(
+            json["id"], name=json.get("name"), update=json.get("update", True)
+        )
 
     @classmethod
     def from_value(cls, value: int | dict[str, int | str]) -> Mod:

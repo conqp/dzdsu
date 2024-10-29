@@ -100,6 +100,11 @@ class Server(NamedTuple):
         return {mod for mod in chain(self.mods, self.server_mods) if mod.enabled}
 
     @property
+    def mods_to_update(self) -> set[Mod]:
+        """Yields mods eligible for update."""
+        return {mod for mod in self.enabled_mods if mod.update}
+
+    @property
     def executable_args(self) -> Iterator[str]:
         """Yields arguments for the server executable."""
         yield from self.params.executable_args
