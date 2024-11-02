@@ -1,14 +1,10 @@
 """Extended RCon client."""
 
-from contextlib import suppress
-from threading import Thread
 from time import sleep
 
 from rcon import battleye
 
 __all__ = ["Client"]
-
-from rcon.battleye import ServerMessage
 
 
 class Client(battleye.Client):
@@ -21,13 +17,12 @@ class Client(battleye.Client):
         return self.say(-1, message)
 
     def countdown(
-        self, template: str, countdown: int, *, every: int = 10, always_below: int = 30
+            self, template: str, countdown: int, *, every: int = 10,
+            always_below: int = 30
     ) -> None:
         """Notify users about shutdown."""
         first = True
         self.running = True
-        thread = Thread(target=self._handle_server_messages, daemon=True)
-        thread.start()
 
         for passed in range(countdown):
             remaining = countdown - passed
@@ -35,11 +30,12 @@ class Client(battleye.Client):
             if first or remaining % every == 0 or remaining < always_below:
                 first = False
                 self.broadcast(template.format(remaining))
+            else:
+                self.run("")
 
             sleep(1)
 
         self.running = False
-        thread.join()
 
     def kick(self, player: int | str, reason: str | None = None) -> str:
         """Kicks the respective player."""
@@ -55,10 +51,3 @@ class Client(battleye.Client):
     def shutdown(self) -> str:
         """Shutdown the server."""
         return self.run("#shutdown")
-
-    def _handle_server_messages(self):
-        """Handle server messages."""
-        while self.running:
-            with suppress(TimeoutError):
-                if isinstance(response := self.receive(), ServerMessage):
-                    self.handle_server_message(response)
