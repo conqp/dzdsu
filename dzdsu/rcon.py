@@ -27,8 +27,6 @@ class Client(battleye.Client):
             if first or remaining % every == 0 or remaining < always_below:
                 first = False
                 self.broadcast(template.format(remaining))
-            else:
-                self.run("")
 
             sleep(1)
 
